@@ -7,7 +7,10 @@ puppet var pos
 puppet var vel
 
 func _ready():
-	pass
+	if gstate.mplayer:
+		pass
+	else:
+		pass
 
 func _physics_process(_delta):
 	if gstate.mplayer:
@@ -22,6 +25,8 @@ func _physics_process(_delta):
 	if gstate.mplayer:
 		rset_unreliable("pos", position)
 		rset_unreliable("vel", velocity)
+		if not is_network_master():
+			pos = position
 
 func parse_movement():
 	var vect = Vector2()
