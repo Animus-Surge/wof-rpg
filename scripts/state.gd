@@ -27,6 +27,18 @@ func _ready():
 	pass
 
 # Multiplayer system
+
+#Data format
+#"pid"{
+#	"username":string,
+#	"character-id":string, < load from server database (local file in dedicated server
+#	"flags":string < A - admin, M - mod, D - dev, O - other (connect to database to check the 'other' section of the flags and decode from there)
+#}
+
+var players = {}
+
+puppet func player_connect(id, data):
+	pass
 #TODO
 
 # Scene Manager
