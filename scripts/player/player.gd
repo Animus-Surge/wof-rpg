@@ -12,6 +12,11 @@ func _ready():
 	else:
 		pass
 
+func _input(event):
+	if event is InputEventKey and event.pressed:
+		if event.scancode == KEY_A:
+			gstate.load_scene("testmap2")
+
 func _physics_process(_delta):
 	if gstate.mplayer:
 		if is_network_master():

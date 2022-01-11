@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="wof-rpg2"
-run/main_scene="res://scenes/testmap.tscn"
+run/main_scene="res://scenes/loading_screen.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -20,10 +20,6 @@ gstate="*res://scripts/state.gd"
 
 [display]
 
-window/size/width=256
-window/size/height=150
-window/size/test_width=1024
-window/size/test_height=600
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
 

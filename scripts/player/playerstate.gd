@@ -3,8 +3,8 @@ extends Node
 # Local playerstate system
 
 #Player display stuff
-var uname # Player display name for multiplayer instances
 var tribe_id # Contains the ID for the tribe (i.e. "iw") Hybrids look like this: "iw-sw" and custom tribes (addons) look like this: "cs:<tribe_id>"
+#TODO: more appearance things
 
 #Stats
 var hp

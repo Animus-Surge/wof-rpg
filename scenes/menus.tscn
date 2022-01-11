@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scripts/global/scene_root.gd" type="Script" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+func splayer_press():
+	#Load scene (thats it)
+	pass # Replace with function body.
+
+func mplayer_press():
+	#Load scene
+	#Connect to local server (TODO)
+	
+	pass # Replace with function body.
+"
+
+[node name="menus" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+scene_name = "menus"
+
+[node name="handler" type="Node" parent="."]
+script = SubResource( 1 )
+
+[node name="sp_btn" type="Button" parent="."]
+margin_right = 12.0
+margin_bottom = 20.0
+
+[node name="mp_btn" type="Button" parent="."]
+margin_right = 12.0
+margin_bottom = 20.0
+
+[connection signal="pressed" from="sp_btn" to="handler" method="splayer_press"]
+[connection signal="pressed" from="mp_btn" to="handler" method="mplayer_press"]
