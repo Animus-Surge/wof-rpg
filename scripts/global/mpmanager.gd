@@ -1,11 +1,10 @@
 extends Node
 
+#Player objects
 onready var plr_obj = load("res://objects/entity/player.tscn")
 
-onready var objnode = $"../YSort"
-
-var players = {} # Store all the players in an array because
-				 # the YSort node also contains objects
+#Nodes that get used often
+onready var objnode = $"../YSort" #Node where all the objects that need to get sorted by y coordinate are stored
 
 puppet func spawn_player(pos, id, data):
 	var player = plr_obj.instance()

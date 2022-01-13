@@ -8,14 +8,12 @@ puppet var vel
 
 func _ready():
 	if gstate.mplayer:
-		pass
+		if is_network_master():
+			$Camera2D.current = true
+		else:
+			$Camera2D.current = false
 	else:
 		pass
-
-func _input(event):
-	if event is InputEventKey and event.pressed:
-		if event.scancode == KEY_A:
-			gstate.load_scene("testmap2")
 
 func _physics_process(_delta):
 	if gstate.mplayer:

@@ -33,7 +33,6 @@ func _ready():
 	
 	if !debug:
 		current_scene = "loading_screen"
-	pass
 
 #Menu flags
 var emsg_en = false
@@ -62,40 +61,84 @@ var username
 
 #Flags
 var deliberate_disconnect = false
+var attempt = 1 #Number of connection attempts made, default 1
 #...
 
+var max_attempts = 3 #Only try to connect 3 times, then fail
+
 var players = {}
+var mip #short for multiplayer_ip
+var mport #short for multiplayer_port
 
 #Server Management
 
-func s_connect(ip, port = "25622"):
-	gstate.load_scene("testmap")
+func s_connect(ip, port = 25622):
+	port = int(port) # Ensure that it always becomes an integer (WILL BE CHECKED IN THE DIALOG)
+	connect("done", self, "_scene_load_complete")
+	attempt = 1
+	mport = port
+	mip = ip
 	auto_hide_loadscreen = false
-	pass
+	gstate.load_scene("testmap")
+
+func _scene_load_complete():
+	#Create the multiplayer instance once the map is done loading
+	print("Attempting connection to server (attempt " + str(attempt) + ")")
+	var host = NetworkedMultiplayerENet.new()
+	host.create_client(mip, mport)
+	get_tree().set_network_peer(host)
 
 func connected():
+	disconnect("done", self, "_scene_load_complete")
 	emit_signal("mp_connected")
-	pass
+	prestart()
+	print("Connected to server.")
 
 func fail_connected():
-	emit_signal("mp_fail")
-	pass
+	get_tree().set_network_peer(null)
+	if attempt >= max_attempts:
+		disconnect("done", self, "_scene_load_complete")
+		emit_signal("mp_fail")
+		print("Connection failed.")
+		auto_hide_loadscreen = false
+		load_scene("menus")
+	else:
+		attempt += 1
+		_scene_load_complete() #Maybe should rename this function
+		
 
 func disconnected():
+	players.clear()
 	emit_signal("mp_disconnected")
-	#Load the main menu
-	load_scene("menu")
+	#Load the main menu (or maybe the server select screen instead? Or character select?)
+	load_scene("menus")
+	print("Disconnected.")
 	#If the termination is not deliberate...
 	if !deliberate_disconnect:
 		# ... show an error message (set a flag)
-		pass
-	pass
+		emsg = "Disconnected."
+		emsg_en = true
+		print("Connection lost")
+	#Otherwise, thats it! Nothing else to do.
 
-puppet func player_connect(id, data):
+
+puppet func register_player(id, data):
 	players[id] = data
+	print("Player: " + id + " registered successfully")
 
-puppet func player_disconnect(id):
+puppet func unregister_player(id):
 	players.erase(id)
+	print("Player: " + id + " unregistered")
+
+puppet func prestart():
+	print("PRESTART SERVER")
+	#TODO: data handling
+	rpc_id(1, "register_player", get_tree().get_network_unique_id(), {"username":"some_username"})
+	
+	#Show the map
+	hide_loadingscreen()
+	
+	rpc_id(1, "populate")
 
 #chat system
 
@@ -105,7 +148,7 @@ puppet func player_disconnect(id):
 # Scene Manager #
 #################
 
-signal done(scene_name)
+signal done()
 
 var loader
 var scene
@@ -148,11 +191,10 @@ func _process(_delta):
 	while OS.get_ticks_msec() < t + tmax:
 		var err = loader.poll()
 		if err == ERR_FILE_EOF:
-			print("Done!")
 			var res = loader.get_resource()
 			loader = null
 			set_scene(res)
-			emit_signal("done", scene)
+			emit_signal("done")
 			break
 		elif err == OK:
 			pass
@@ -166,4 +208,8 @@ func set_scene(data):
 	current_scene = scene
 	get_node("/root").add_child(data.instance())
 	if auto_hide_loadscreen:
+		get_node("/root/loading_screen").hide()
+
+func hide_loadingscreen():
+	if !loader:
 		get_node("/root/loading_screen").hide()
