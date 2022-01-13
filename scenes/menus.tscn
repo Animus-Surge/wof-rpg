@@ -15,12 +15,19 @@ script/source = "extends Node
 # - News panel
 # - Settings panel
 
+func _ready():
+	get_node(\"../Panel\").hide()
+
 func splayer_press():
 	gstate.load_scene(\"testmap\")
 
 func mplayer_press():
-	# TODO: implement a dialog box to handle grabbing the URL and IP address
-	gstate.s_connect(\"127.0.0.1\")
+	get_node(\"../Panel\").show()
+	get_node(\"../Panel/LineEdit\").clear()
+
+func join_press():
+	var ip = get_node(\"../Panel/LineEdit\").text
+	gstate.s_connect(ip)
 "
 
 [node name="menus" type="Control"]
@@ -55,5 +62,56 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Panel" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -193.0
+margin_top = -37.0
+margin_right = 193.0
+margin_bottom = 37.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="Panel"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -314.0
+margin_top = -12.0
+margin_bottom = 12.0
+placeholder_text = "127.0.0.1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Panel"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -7.0
+margin_right = 67.0
+margin_bottom = 7.0
+text = "IP address"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="Panel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -34.0
+margin_top = -20.0
+margin_right = 34.0
+text = "Join"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="pressed" from="sp_btn" to="handler" method="splayer_press"]
 [connection signal="pressed" from="mp_btn" to="handler" method="mplayer_press"]
+[connection signal="pressed" from="Panel/Button" to="handler" method="join_press"]

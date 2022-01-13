@@ -33,7 +33,7 @@ func player_disconnect(id):
 	
 	print("Player: " + str(id) + " disconnected")
 
-remote func register_player(data):
+remote func register_player(_id, data):
 	var id = get_tree().get_rpc_sender_id()
 	players[id] = data
 	
@@ -42,12 +42,12 @@ remote func register_player(data):
 	
 	rpc("register_player", id, data)
 	
-	print("Player: " + id + " registered successfully")
+	print("Player: " + str(id) + " registered successfully")
 
 puppetsync func unregister_player(id):
 	players.erase(id)
 	
-	print("Player: " + id + " unregistered")
+	print("Player: " + str(id) + " unregistered")
 
 remote func populate():
 	var id = get_tree().get_rpc_sender_id()

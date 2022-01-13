@@ -124,11 +124,11 @@ func disconnected():
 
 puppet func register_player(id, data):
 	players[id] = data
-	print("Player: " + id + " registered successfully")
+	print("Player: " + str(id) + " registered successfully")
 
 puppet func unregister_player(id):
 	players.erase(id)
-	print("Player: " + id + " unregistered")
+	print("Player: " + str(id) + " unregistered")
 
 puppet func prestart():
 	print("PRESTART SERVER")
