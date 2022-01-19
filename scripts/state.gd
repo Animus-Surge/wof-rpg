@@ -79,7 +79,7 @@ func s_connect(ip, port = 25622):
 	mport = port
 	mip = ip
 	auto_hide_loadscreen = false
-	gstate.load_scene("testmap")
+	gstate.load_scene("map")
 
 func _scene_load_complete():
 	#Create the multiplayer instance once the map is done loading
@@ -89,6 +89,7 @@ func _scene_load_complete():
 	get_tree().set_network_peer(host)
 
 func connected():
+	mplayer = true
 	disconnect("done", self, "_scene_load_complete")
 	emit_signal("mp_connected")
 	prestart()
@@ -100,8 +101,9 @@ func fail_connected():
 		disconnect("done", self, "_scene_load_complete")
 		emit_signal("mp_fail")
 		print("Connection failed.")
-		auto_hide_loadscreen = false
+		auto_hide_loadscreen = true
 		load_scene("menus")
+		mplayer = false
 	else:
 		attempt += 1
 		_scene_load_complete() #Maybe should rename this function
@@ -110,9 +112,12 @@ func fail_connected():
 func disconnected():
 	players.clear()
 	emit_signal("mp_disconnected")
+	get_tree().set_network_peer(null)
 	#Load the main menu (or maybe the server select screen instead? Or character select?)
+	auto_hide_loadscreen = true
 	load_scene("menus")
 	print("Disconnected.")
+	mplayer = false
 	#If the termination is not deliberate...
 	if !deliberate_disconnect:
 		# ... show an error message (set a flag)
@@ -130,10 +135,10 @@ puppet func unregister_player(id):
 	players.erase(id)
 	print("Player: " + str(id) + " unregistered")
 
-puppet func prestart():
+func prestart():
 	print("PRESTART SERVER")
 	#TODO: data handling
-	rpc_id(1, "register_player", get_tree().get_network_unique_id(), {"username":"some_username"})
+	rpc_id(1, "register_player", get_tree().get_network_unique_id(), {"username":username})
 	
 	#Show the map
 	hide_loadingscreen()

@@ -43,6 +43,7 @@ remote func register_player(_id, data):
 	rpc("register_player", id, data)
 	
 	print("Player: " + str(id) + " registered successfully")
+	print("Player data: " + str(data))
 
 puppetsync func unregister_player(id):
 	players.erase(id)
@@ -52,7 +53,12 @@ puppetsync func unregister_player(id):
 remote func populate():
 	var id = get_tree().get_rpc_sender_id()
 	
+	print(players)
+	
 	for player in objnode.get_children():
-		mpnode.rpc_id(id, "spawn_player", player.position, player.get_network_master(), players[player.name])
+		print(typeof(players.keys()[0]))
+		print(players.get(int(player.name)))
+		
+		mpnode.rpc_id(id, "spawn_player", player.position, player.get_network_master(), players.get(int(player.name)))
 	
 	mpnode.rpc("spawn_player", Vector2(0, 0), id, players.get(id))

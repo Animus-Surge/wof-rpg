@@ -3,8 +3,8 @@ extends KinematicBody2D
 export(int) var speed = 100
 var velocity = Vector2()
 
-puppet var pos
-puppet var vel
+puppet var pos = Vector2()
+puppet var vel = Vector2()
 
 func _ready():
 	if gstate.mplayer:

@@ -12,7 +12,9 @@ puppetsync func spawn_player(pos, id, _data):
 	player.name = str(id)
 	player.set_network_master(id)
 	
+	print(id)
+	
 	objnode.add_child(player)
 
 puppetsync func rm_player(id):
-	objnode.get_node(id).queue_free()
+	objnode.get_node(str(id)).queue_free()
