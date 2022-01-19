@@ -27,8 +27,11 @@ func _ready():
 	set_process(false)
 	
 	#Connect multiplayer signals
-	get_tree().connect("connected_to_server", self, "connected")
-	get_tree().connect("connection_failed", self, "fail_connected")
+	get_tree().connect("network_peer_connected", self, "player_connected")
+	get_tree().connect("network_peer_disconnected", self, "player_disconnected")
+	
+	get_tree().connect("connected_to_server", self, "connection_success")
+	get_tree().connect("connection_failed", self, "connection_failed")
 	get_tree().connect("server_disconnected", self, "disconnected")
 	
 	if !debug:
@@ -55,8 +58,10 @@ var username
 #Player data format
 #"pid"{
 #	"username":string,
-#	"character-id":string, < load from server database (local file in dedicated server
-#	"flags":string < A - admin, M - mod, D - dev, O - other (use server database to manage roles of the player)
+#	"uuid":string, < Universal ID when playing online with an account, otherwise no caching will occur
+#	"character-id":string, < load from server database (local file in dedicated server, or load from data in this dictionary and store locally)
+#	"flags":string, < A - admin, M - mod, D - dev, O - other (use server database to manage roles of the player)
+#	"cdata":dictionary < Contains all the data for characters in case no cached version is available
 #}
 
 #Flags
@@ -67,83 +72,100 @@ var attempt = 1 #Number of connection attempts made, default 1
 var max_attempts = 3 #Only try to connect 3 times, then fail
 
 var players = {}
-var mip #short for multiplayer_ip
-var mport #short for multiplayer_port
 
 #Server Management
 
-func s_connect(ip, port = 25622):
-	port = int(port) # Ensure that it always becomes an integer (WILL BE CHECKED IN THE DIALOG)
-	connect("done", self, "_scene_load_complete")
-	attempt = 1
-	mport = port
-	mip = ip
+var mult_port
+var mult_ip
+
+puppetsync func unregister_player(id):
+	players.erase(id)
+	print("UNREGISTER: Unregistered player: " + str(id))
+
+#LAN multiplayer system (local server management)
+func server_create(port = 25622):
+	connect("done", self, "create_lan")
+	mult_port = port
+	load_scene("map")
+
+func create_lan():
+	disconnect("done", self, "create_lan")
+	var peer = NetworkedMultiplayerENet.new()
+	peer.create_server(mult_port, 20) # All local server instances will be limited to 20 players
+	get_tree().set_network_peer(peer)
+	print("SERVER: Up on port: " + str(mult_port))
+
+func player_connected(id):
+	print("CONNECT: Player " + str(id) + " connected.")
+
+func player_disconnected(id):
+	print("DISCONNECT: Player " + str(id) + " disconnected.")
+	
+	if players.has(id):
+		get_node("/root/map").rpc("despawn_player", id)
+		players.erase(id)
+
+remote func populate():
+	var cid = get_tree().get_rpc_sender_id()
+	print("POPULATE: Player " + str(cid) + " populate() call")
+	
+	var player_root = get_node("/root/map/YSort")
+	var map = get_node("/root/map")
+	for plr in players:
+		map.rpc_id(cid, "spawn_player", plr, Vector2.ZERO, players[plr])
+	
+	map.rpc("spawn_player", cid, Vector2.ZERO, players[cid])
+
+remote func register_player_server(data):
+	var cid = get_tree().get_rpc_sender_id()
+	print("REGISTER: Player " + str(cid) + " registering...")
+	
+	players[cid] = data
+	
+	for plr in players:
+		rpc_id(cid, "register_player", plr, players[plr])
+	
+	rpc("register_player", cid, data)
+
+#Client system
+func join_server(ip, port=25622):
+	mult_port = port
+	mult_ip = ip
+	connect("done", self, "map_ready")
 	auto_hide_loadscreen = false
-	gstate.load_scene("map")
+	load_scene("map")
 
-func _scene_load_complete():
-	#Create the multiplayer instance once the map is done loading
-	print("Attempting connection to server (attempt " + str(attempt) + ")")
-	var host = NetworkedMultiplayerENet.new()
-	host.create_client(mip, mport)
-	get_tree().set_network_peer(host)
-
-func connected():
-	mplayer = true
-	disconnect("done", self, "_scene_load_complete")
-	emit_signal("mp_connected")
+func connection_success():
+	print("CONNECTION: Connected successfully to: " + mult_ip + ":" + str(mult_port))
 	prestart()
-	print("Connected to server.")
 
-func fail_connected():
-	get_tree().set_network_peer(null)
-	if attempt >= max_attempts:
-		disconnect("done", self, "_scene_load_complete")
-		emit_signal("mp_fail")
-		print("Connection failed.")
-		auto_hide_loadscreen = true
-		load_scene("menus")
-		mplayer = false
-	else:
-		attempt += 1
-		_scene_load_complete() #Maybe should rename this function
-		
-
-func disconnected():
-	players.clear()
-	emit_signal("mp_disconnected")
-	get_tree().set_network_peer(null)
-	#Load the main menu (or maybe the server select screen instead? Or character select?)
+func connection_failed():
+	print("CONNECTION: Failed to connect to: " + mult_ip + ":" + str(mult_port))
 	auto_hide_loadscreen = true
 	load_scene("menus")
-	print("Disconnected.")
-	mplayer = false
-	#If the termination is not deliberate...
-	if !deliberate_disconnect:
-		# ... show an error message (set a flag)
-		emsg = "Disconnected."
-		emsg_en = true
-		print("Connection lost")
-	#Otherwise, thats it! Nothing else to do.
 
+func disconnected():
+	print("CONNECTION: Disconnected.")
+	auto_hide_loadscreen = true
+	load_scene("menus")
 
-puppet func register_player(id, data):
-	players[id] = data
-	print("Player: " + str(id) + " registered successfully")
-
-puppet func unregister_player(id):
-	players.erase(id)
-	print("Player: " + str(id) + " unregistered")
+func map_ready():
+	disconnect("done", self, "map_ready")
+	var peer = NetworkedMultiplayerENet.new()
+	peer.create_client(mult_ip, mult_port)
+	get_tree().set_network_peer(peer)
 
 func prestart():
-	print("PRESTART SERVER")
-	#TODO: data handling
-	rpc_id(1, "register_player", get_tree().get_network_unique_id(), {"username":username})
+	print("PRESTART")
+	rpc_id(1, "register_player_server", {"uname":"Surgie"})
 	
-	#Show the map
 	hide_loadingscreen()
 	
 	rpc_id(1, "populate")
+
+puppet func register_player(id, data):
+	players[id] = data
+	print("REGISTER: Player " + str(id) + " registered. Data: " + str(data)) # Data field will not be outputted for security reasons. This is debug information.
 
 #chat system
 

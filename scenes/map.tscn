@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://scripts/global/scene_root.gd" type="Script" id=1]
+[ext_resource path="res://scripts/global/maproot.gd" type="Script" id=1]
 [ext_resource path="res://scripts/global/mpmanager.gd" type="Script" id=2]
 [ext_resource path="res://assets/tiles/tile-temp.png" type="Texture" id=3]
 

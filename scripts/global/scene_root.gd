@@ -9,3 +9,19 @@ func _ready():
 	if custom_props.begins_with("scene_load"):
 		var scene_name = custom_props.split(" ")[1]
 		gstate.load_scene(scene_name)
+
+func mp_press():
+	$Panel.show()
+
+func cserver_press():
+	gstate.server_create()
+
+func jserver_press():
+	var ip = $Panel/ip.text # TODO: separate the port from the end of the IP
+	var username = $Panel/uname.text
+	
+	gstate.username = username
+	gstate.join_server(ip)
+
+func sp_press():
+	pass #TODO

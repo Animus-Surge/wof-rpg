@@ -1,38 +1,36 @@
 extends KinematicBody2D
 
-export(int) var speed = 100
-var velocity = Vector2()
+const SPEED = 100
+var vel  = Vector2()
 
-puppet var pos = Vector2()
-puppet var vel = Vector2()
+puppet var pvel = Vector2()
+puppet var ppos = Vector2()
 
 func _ready():
-	if gstate.mplayer:
-		if is_network_master():
-			$Camera2D.current = true
-		else:
-			$Camera2D.current = false
+	var pid = get_network_master()
+	if is_network_master():
+		$Camera2D.current = true
+		$Label.text = "you"
 	else:
-		pass
+		$Label.text = str(pid)
+	
+	ppos = position
 
-func _physics_process(_delta):
-	if gstate.mplayer:
-		if is_network_master():
-			parse_movement()
-		else:
-			position = pos
-			velocity = vel
+func _process(delta):
+	if is_network_master():
+		var mdir = Vector2()
+		mdir.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+		mdir.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+		
+		vel = mdir.normalized() * SPEED
+		
+		rset_unreliable("pvel", vel)
+		rset_unreliable("ppos", position)
 	else:
-		parse_movement()
-	velocity = move_and_slide(velocity)
-	if gstate.mplayer:
-		rset_unreliable("pos", position)
-		rset_unreliable("vel", velocity)
-		if not is_network_master():
-			pos = position
-
-func parse_movement():
-	var vect = Vector2()
-	vect.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
-	vect.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-	velocity = vect.normalized() * speed
+		position = ppos
+		vel = pvel
+	
+	position += vel * delta
+	
+	if !is_network_master():
+		ppos = position
