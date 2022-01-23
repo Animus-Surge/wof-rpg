@@ -1,8 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scripts/global/maproot.gd" type="Script" id=1]
-[ext_resource path="res://scripts/global/mpmanager.gd" type="Script" id=2]
 [ext_resource path="res://assets/tiles/tile-temp.png" type="Texture" id=3]
+[ext_resource path="res://scripts/ui/ui_manager.gd" type="Script" id=4]
 
 [sub_resource type="TileSet" id=1]
 0/name = "Temp Tile"
@@ -20,11 +20,11 @@
 0/shapes = [  ]
 0/z_index = 0
 
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 0, 0, 0.509804 )
+
 [node name="map" type="Node2D"]
 script = ExtResource( 1 )
-
-[node name="mpmanager" type="Node" parent="."]
-script = ExtResource( 2 )
 
 [node name="map" type="Node2D" parent="."]
 
@@ -40,9 +40,95 @@ tile_data = PoolIntArray( -262150, 0, 0, -262149, 0, 0, -262148, 0, 0, -262147, 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 0
 
-[node name="Control" type="Control" parent="UILayer"]
+[node name="ui_root" type="Control" parent="UILayer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="chatpanel" type="Panel" parent="UILayer/ui_root"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -244.0
+margin_top = -324.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="message_box" type="LineEdit" parent="UILayer/ui_root/chatpanel"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 2.5
+margin_top = -27.0
+margin_right = -2.5
+margin_bottom = -3.0
+placeholder_text = "Enter message here..."
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UILayer/ui_root/chatpanel"]
+anchor_left = 0.0122951
+anchor_top = 0.00925926
+anchor_right = 0.991803
+anchor_bottom = 0.904321
+scroll_horizontal_enabled = false
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UILayer/ui_root/chatpanel/ScrollContainer"]
+margin_right = 239.0
+margin_bottom = 290.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="pausemenu" type="Panel" parent="UILayer/ui_root"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="resume" type="Button" parent="UILayer/ui_root/pausemenu"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -32.0
+margin_top = -42.0
+margin_right = 33.0
+margin_bottom = -22.0
+text = "Resume"
+
+[node name="settings" type="Button" parent="UILayer/ui_root/pausemenu"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -32.0
+margin_top = -10.0
+margin_right = 33.0
+margin_bottom = 10.0
+text = "settings"
+
+[node name="quit" type="Button" parent="UILayer/ui_root/pausemenu"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -32.0
+margin_top = 22.0
+margin_right = 33.0
+margin_bottom = 42.0
+text = "quit"
+
+[connection signal="pressed" from="UILayer/ui_root/pausemenu/resume" to="UILayer/ui_root" method="unpause"]
+[connection signal="pressed" from="UILayer/ui_root/pausemenu/settings" to="UILayer/ui_root" method="settings"]
+[connection signal="pressed" from="UILayer/ui_root/pausemenu/quit" to="UILayer/ui_root" method="quit"]

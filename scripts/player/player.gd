@@ -7,6 +7,10 @@ puppet var pvel = Vector2()
 puppet var ppos = Vector2()
 
 func _ready():
+	if !gstate.mplayer:
+		$Camera2D.current = true
+		$Label.text = "you"
+		return
 	var pid = get_network_master()
 	if is_network_master():
 		$Camera2D.current = true
@@ -17,20 +21,22 @@ func _ready():
 	ppos = position
 
 func _process(delta):
-	if is_network_master():
+	if (!gstate.mplayer or is_network_master()) and !gstate.paused:
 		var mdir = Vector2()
 		mdir.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 		mdir.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 		
 		vel = mdir.normalized() * SPEED
 		
-		rset_unreliable("pvel", vel)
-		rset_unreliable("ppos", position)
+		if gstate.mplayer:
+			rset_unreliable("pvel", vel)
+			rset_unreliable("ppos", position)
 	else:
-		position = ppos
-		vel = pvel
+		if gstate.mplayer:
+			position = ppos
+			vel = pvel
 	
 	position += vel * delta
 	
-	if !is_network_master():
+	if gstate.mplayer and !is_network_master():
 		ppos = position

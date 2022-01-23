@@ -5,9 +5,13 @@ extends Node
 ################
 
 #Signals
+# warning-ignore:unused_signal
 signal mp_connected()
+# warning-ignore:unused_signal
 signal mp_disconnected()
+# warning-ignore:unused_signal
 signal mp_client_connect()
+# warning-ignore:unused_signal
 signal mp_fail()
 
 #Global constants
@@ -27,11 +31,16 @@ func _ready():
 	set_process(false)
 	
 	#Connect multiplayer signals
+# warning-ignore:return_value_discarded
 	get_tree().connect("network_peer_connected", self, "player_connected")
+# warning-ignore:return_value_discarded
 	get_tree().connect("network_peer_disconnected", self, "player_disconnected")
 	
+# warning-ignore:return_value_discarded
 	get_tree().connect("connected_to_server", self, "connection_success")
+# warning-ignore:return_value_discarded
 	get_tree().connect("connection_failed", self, "connection_failed")
+# warning-ignore:return_value_discarded
 	get_tree().connect("server_disconnected", self, "disconnected")
 	
 	if !debug:
@@ -84,6 +93,7 @@ puppetsync func unregister_player(id):
 
 #LAN multiplayer system (local server management)
 func server_create(port = 25622):
+# warning-ignore:return_value_discarded
 	connect("done", self, "create_lan")
 	mult_port = port
 	load_scene("map")
@@ -109,7 +119,6 @@ remote func populate():
 	var cid = get_tree().get_rpc_sender_id()
 	print("POPULATE: Player " + str(cid) + " populate() call")
 	
-	var player_root = get_node("/root/map/YSort")
 	var map = get_node("/root/map")
 	for plr in players:
 		map.rpc_id(cid, "spawn_player", plr, Vector2.ZERO, players[plr])
@@ -131,12 +140,14 @@ remote func register_player_server(data):
 func join_server(ip, port=25622):
 	mult_port = port
 	mult_ip = ip
+# warning-ignore:return_value_discarded
 	connect("done", self, "map_ready")
 	auto_hide_loadscreen = false
 	load_scene("map")
 
 func connection_success():
 	print("CONNECTION: Connected successfully to: " + mult_ip + ":" + str(mult_port))
+	mplayer = true
 	prestart()
 
 func connection_failed():
@@ -145,7 +156,8 @@ func connection_failed():
 	load_scene("menus")
 
 func disconnected():
-	print("CONNECTION: Disconnected.")
+	print("CONNECTION: Disconnected. Deliberate: " + str(deliberate_disconnect))
+	mplayer = false
 	auto_hide_loadscreen = true
 	load_scene("menus")
 
@@ -167,9 +179,36 @@ puppet func register_player(id, data):
 	players[id] = data
 	print("REGISTER: Player " + str(id) + " registered. Data: " + str(data)) # Data field will not be outputted for security reasons. This is debug information.
 
-#chat system
+#Packet handling
 
-#TODO
+enum PacketType {
+	TYPE_P2P,
+	TYPE_P2S,
+	TYPE_S2P
+}
+
+func send_packet(data):
+	rpc_id(1, "recieve_packet", get_tree().get_network_unique_id(), data)
+
+func recieve_packet(sender_id, data):
+	print("PACKET_MGR: Recieved packet from: " + str(sender_id) + " data: " + str(data))
+	match data.type:
+		"ping": pass
+		"chat_msg":
+			pass
+		"trade":
+			pass
+
+# Singleplayer instance
+
+func sp():
+# warning-ignore:return_value_discarded
+	connect("done", self, "spawn_player")
+	load_scene("map")
+
+func spawn_player():
+	get_node("/root/map").spawn_player("player", Vector2(0, 0), {})
+	disconnect("done", self, "spawn_player")
 
 #################
 # Scene Manager #

@@ -7,8 +7,8 @@ func _ready():
 	if scene_name.empty(): scene_name = name
 	if gstate.debug: gstate.current_scene = scene_name
 	if custom_props.begins_with("scene_load"):
-		var scene_name = custom_props.split(" ")[1]
-		gstate.load_scene(scene_name)
+		var scene = custom_props.split(" ")[1]
+		gstate.load_scene(scene)
 
 func mp_press():
 	$Panel.show()
@@ -24,4 +24,4 @@ func jserver_press():
 	gstate.join_server(ip)
 
 func sp_press():
-	pass #TODO
+	gstate.sp()

@@ -23,7 +23,3 @@ var size
 #Interaction manager
 var interacting_with
 # TODO
-
-# Helper functions
-func inv_add(item):
-	pass

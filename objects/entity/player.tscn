@@ -21,6 +21,7 @@ shape = SubResource( 1 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2( 0.25, 0.25 )
+smoothing_enabled = true
 
 [node name="Label" type="Label" parent="."]
 margin_left = -126.0
