@@ -22,6 +22,7 @@ const debug = false
 #Game state variables
 var paused = false
 var mplayer = false
+var hosting_server = false
 
 var auto_hide_loadscreen = true # Used for multiplayer system
 
@@ -100,6 +101,8 @@ func server_create(port = 25622):
 
 func create_lan():
 	disconnect("done", self, "create_lan")
+	mplayer = true
+	hosting_server = true
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(mult_port, 20) # All local server instances will be limited to 20 players
 	get_tree().set_network_peer(peer)
@@ -147,16 +150,19 @@ func join_server(ip, port=25622):
 
 func connection_success():
 	print("CONNECTION: Connected successfully to: " + mult_ip + ":" + str(mult_port))
+	emit_signal("mp_connected")
 	mplayer = true
 	prestart()
 
 func connection_failed():
 	print("CONNECTION: Failed to connect to: " + mult_ip + ":" + str(mult_port))
+	emit_signal("mp_fail")
 	auto_hide_loadscreen = true
 	load_scene("menus")
 
 func disconnected():
 	print("CONNECTION: Disconnected. Deliberate: " + str(deliberate_disconnect))
+	emit_signal("mp_disconnected")
 	mplayer = false
 	auto_hide_loadscreen = true
 	load_scene("menus")
@@ -169,7 +175,7 @@ func map_ready():
 
 func prestart():
 	print("PRESTART")
-	rpc_id(1, "register_player_server", {"uname":"Surgie"})
+	rpc_id(1, "register_player_server", {"uname":username})
 	
 	hide_loadingscreen()
 	
@@ -181,23 +187,34 @@ puppet func register_player(id, data):
 
 #Packet handling
 
-enum PacketType {
-	TYPE_P2P,
-	TYPE_P2S,
-	TYPE_S2P
-}
+signal chat_message(message)
 
 func send_packet(data):
 	rpc_id(1, "recieve_packet", get_tree().get_network_unique_id(), data)
 
-func recieve_packet(sender_id, data):
+remote func recieve_packet(sender_id, data):
 	print("PACKET_MGR: Recieved packet from: " + str(sender_id) + " data: " + str(data))
 	match data.type:
-		"ping": pass
-		"chat_msg":
-			pass
+		"ping":
+			print("PACKET_MGR: Ping: " + data.content)
+			rpc_id(sender_id, "recieve_packet_c", {"type":"ping", "content":"Pong!"})
+		"chatmsg":
+			if data.dm:
+				rpc_id(data.dm_recipient, "recieve_packet_c", {"type":"chatmsg", "sender_id":data.sender_id, "msg":data.msg, "dm":true})
+			else:
+				rpc("recieve_packet_c", {"type":"chatmsg", "sender_id":data.sender_id, "msg":data.msg, "dm":false})
 		"trade":
 			pass
+
+puppet func recieve_packet_c(data):
+	print("PACKET_MGR: Recieved packet from server. Content: " + str(data))
+	match data.type:
+		"ping":
+			print(data.content)
+		"chatmsg":
+			print("PACKET_MGR: Chat: " + data.msg)
+			# TODO: maybe have different types of messages, like a party chat, private chat, or something like that
+			emit_signal("chat_message", "[color=#" + ("00ffff" if data.sender_id == get_tree().get_network_unique_id() else "00ff00") + "]" + gstate.players[data.sender_id].uname + "[/color]" + (" [color=#ff00ff](private)[/color]: " if data.dm else ": ") + data.msg)
 
 # Singleplayer instance
 
@@ -222,18 +239,18 @@ var wait
 var tmax = 100
 
 func load_scene(scene_name):
-	print("Loading scene: " + scene_name)
+	print("SCN_MGR: Loading scene: " + scene_name)
 	#Check to see if the loading screen hasn't been deleted accidentally
 	if !get_node("/root/loading_screen"):
 		var err = get_tree().change_scene("res://scenes/loading_screen.tscn") # Also useful for debugging things, as the true debug system will not automatically load the loading screen
 		if err != OK:
-			printerr("Error occoured whilst loading the loading screen.")
+			printerr("SCN_MGR: Error occoured whilst loading the loading screen. Error code: " + str(err))
 			return
 		current_scene = "loading_screen"
 	
 	loader = ResourceLoader.load_interactive("res://scenes/%s.tscn" % scene_name)
 	if loader == null:
-		printerr("Loader failed to initialize for some reason")
+		printerr("SCN_MGR: Loader failed to initialize for some reason")
 		return # TODO: error management
 	
 	if current_scene != "loading_screen":
@@ -266,7 +283,7 @@ func _process(_delta):
 			pass
 		else:
 			# TODO: error management
-			printerr("Loader error: " + err)
+			printerr("SCN_MGR: Loader error: " + str(err))
 			loader = null
 			break
 

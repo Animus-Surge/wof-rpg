@@ -20,7 +20,7 @@ func jserver_press():
 	var ip = $Panel/ip.text # TODO: separate the port from the end of the IP
 	var username = $Panel/uname.text
 	
-	gstate.username = username
+	gstate.username = username if not username.empty() else "Player"
 	gstate.join_server(ip)
 
 func sp_press():

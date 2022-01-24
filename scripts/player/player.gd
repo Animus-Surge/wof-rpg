@@ -9,14 +9,14 @@ puppet var ppos = Vector2()
 func _ready():
 	if !gstate.mplayer:
 		$Camera2D.current = true
-		$Label.text = "you"
+		$Label.text = ""
 		return
 	var pid = get_network_master()
 	if is_network_master():
 		$Camera2D.current = true
 		$Label.text = "you"
 	else:
-		$Label.text = str(pid)
+		$Label.text = gstate.players[pid].uname
 	
 	ppos = position
 
@@ -31,10 +31,10 @@ func _process(delta):
 		if gstate.mplayer:
 			rset_unreliable("pvel", vel)
 			rset_unreliable("ppos", position)
-	else:
-		if gstate.mplayer:
+	elif gstate.mplayer:
+		vel = pvel
+		if !gstate.paused: # Prevent the player from jumping back to (0,0)
 			position = ppos
-			vel = pvel
 	
 	position += vel * delta
 	

@@ -53,8 +53,8 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -244.0
-margin_top = -324.0
+margin_left = -403.0
+margin_top = -202.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -73,22 +73,26 @@ __meta__ = {
 }
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UILayer/ui_root/chatpanel"]
-anchor_left = 0.0122951
-anchor_top = 0.00925926
-anchor_right = 0.991803
-anchor_bottom = 0.904321
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 4.0
+margin_right = -3.0
+margin_bottom = -32.0
 scroll_horizontal_enabled = false
 __meta__ = {
 "_edit_use_anchors_": true
 }
 
 [node name="RichTextLabel" type="RichTextLabel" parent="UILayer/ui_root/chatpanel/ScrollContainer"]
-margin_right = 239.0
-margin_bottom = 290.0
+margin_right = 395.0
+margin_bottom = 166.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+bbcode_enabled = true
 
 [node name="pausemenu" type="Panel" parent="UILayer/ui_root"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_styles/panel = SubResource( 2 )
