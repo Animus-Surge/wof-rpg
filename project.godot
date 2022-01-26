@@ -17,6 +17,7 @@ config/icon="res://icon.png"
 [autoload]
 
 gstate="*res://scripts/state.gd"
+pstate="*res://scripts/player/playerstate.gd"
 
 [display]
 

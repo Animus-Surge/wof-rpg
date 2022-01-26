@@ -2,6 +2,8 @@ extends Node
 
 # Local playerstate system
 
+# Playerstate is used for player stuff, COMPLETELY unrelated to stuff in the global state machine
+
 #Player display stuff
 var tribe_id # Contains the ID for the tribe (i.e. "iw") Hybrids look like this: "iw-sw" and custom tribes (addons) look like this: "cs:<tribe_id>"
 #TODO: more appearance things
@@ -21,5 +23,7 @@ var size
 # TODO
 
 #Interaction manager
-var interacting_with
-# TODO
+var interacting_with # Null if not interacting with anything
+
+func interact():
+	if !interacting_with: return

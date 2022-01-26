@@ -20,7 +20,7 @@ func _ready():
 	
 	ppos = position
 
-func _process(delta):
+func _process(_delta):
 	if (!gstate.mplayer or is_network_master()) and !gstate.paused:
 		var mdir = Vector2()
 		mdir.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
@@ -36,7 +36,7 @@ func _process(delta):
 		if !gstate.paused: # Prevent the player from jumping back to (0,0)
 			position = ppos
 	
-	position += vel * delta
+	vel = move_and_slide(vel)
 	
 	if gstate.mplayer and !is_network_master():
 		ppos = position

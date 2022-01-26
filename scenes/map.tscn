@@ -20,7 +20,7 @@
 0/shapes = [  ]
 0/z_index = 0
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0, 0, 0, 0.509804 )
 
 [node name="map" type="Node2D"]
@@ -95,7 +95,7 @@ bbcode_enabled = true
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -132,6 +132,18 @@ margin_top = 22.0
 margin_right = 33.0
 margin_bottom = 42.0
 text = "quit"
+
+[node name="interact_label" type="Label" parent="UILayer/ui_root"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -95.5
+margin_top = 55.0
+margin_right = 95.5
+margin_bottom = 69.0
+text = "Press F to interact with object"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/resume" to="UILayer/ui_root" method="unpause"]
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/settings" to="UILayer/ui_root" method="settings"]

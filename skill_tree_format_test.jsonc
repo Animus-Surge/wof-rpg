@@ -1,0 +1,13 @@
+//Skill tree data structure
+//  Author: Surge
+//  Version: 1.0
+{
+  "skill_id":{
+    "display":"Skill Name", //What the player sees instead of the skill ID
+    "description":"Skill description goes here", //Self explanatory
+    "id":"skill_id", //What the system will see and what it uses to create the actual tree
+    "parent":"parent_id", //The ID of the parent node, gets used for checking to see if the parent node has already been unlocked
+    "children":["child_1", "child_2"], //Array of skill IDs that are children
+    //Skill data stuff goes here...
+  }
+}

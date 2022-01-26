@@ -22,7 +22,3 @@ puppetsync func spawn_player(id, pos, _data):
 
 puppetsync func despawn_player(id):
 	$YSort.get_node(str(id)).queue_free()
-
-#func _process(_delta):
-#	for child in $YSort.get_children():
-#		if child.name.begins_with("@"): child.queue_free()
