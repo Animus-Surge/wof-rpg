@@ -1,7 +1,7 @@
 extends KinematicBody2D
 
-export(String, "NPC", "Container", "Switch") var type
-export(Dictionary) var data # Contains information like speech and such, exported for debug purposes
+export(String, "NPC", "Container", "Switch", "Item") var type
+export(Resource) var data # Contains information like speech and such, exported for debug purposes
 
 var entered_body
 
@@ -18,7 +18,6 @@ func _area_entered(body):
 		pstate.interacting_with = self
 
 func _area_exited(body):
-	print("EXIT")
 	if body.name == entered_body:
 		entered_body = null
 		pstate.interacting_with = null

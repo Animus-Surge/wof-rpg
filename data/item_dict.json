@@ -1,0 +1,26 @@
+[
+  {
+    "id":"temp_1",
+    "texture":"res://assets/textures/items/item_temp_1.png",
+    "name":"Test Item 1",
+    "description":"A test item",
+    "stack_size":100,
+    "type":"generic"
+  },
+  {
+    "id":"temp_2",
+    "texture":"res://assets/textures/items/item_temp_2.png",
+    "name":"Test Item 2",
+    "description":"A test item",
+    "stack_size":100,
+    "type":"generic"
+  },
+  {
+    "id":"temp_3",
+    "texture":"res://assets/textures/items/item_temp_3.png",
+    "name":"Test Item 3",
+    "description":"A test item",
+    "stack_size":100,
+    "type":"generic"
+  }
+]

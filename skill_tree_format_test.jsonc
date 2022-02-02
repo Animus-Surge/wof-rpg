@@ -8,6 +8,10 @@
     "id":"skill_id", //What the system will see and what it uses to create the actual tree
     "parent":"parent_id", //The ID of the parent node, gets used for checking to see if the parent node has already been unlocked
     "children":["child_1", "child_2"], //Array of skill IDs that are children
-    //Skill data stuff goes here...
+    "xp_required":100, //Minimum XP requirement to unlock this skill (might change to levels, we'll see)
+    "data":{ //Data goes in here
+      "enhancements":[], //Array of what gets enhanced with this ability (like hitpoints, health, mana, etc.)
+      "abilities":[] //Array of what abilities get unlocked with this ability (like a dash, fireball, maybe even a magic attack)
+    }
   }
 }

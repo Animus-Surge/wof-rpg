@@ -16,6 +16,9 @@ signal mp_fail()
 
 #Global constants
 
+#Global data
+var item_data
+
 #Debug mode
 const debug = false
 
@@ -46,6 +49,16 @@ func _ready():
 	
 	if !debug:
 		current_scene = "loading_screen"
+	
+	#Load data
+	var file = File.new()
+	var err = file.open("res://data/item_dict.json", File.READ)
+	if err != OK:
+		print(err)
+	else:
+		item_data = JSON.parse(file.get_as_text()).result
+		print("GAMESYS: Loaded item data file (res://data/item_dict.json)")
+	file.close()
 
 #Menu flags
 var emsg_en = false

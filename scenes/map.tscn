@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/global/maproot.gd" type="Script" id=1]
+[ext_resource path="res://objects/entity/interactable_object.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/tiles/tile-temp.png" type="Texture" id=3]
 [ext_resource path="res://scripts/ui/ui_manager.gd" type="Script" id=4]
+[ext_resource path="res://scripts/interaction/item_obj.gd" type="Script" id=5]
 
 [sub_resource type="TileSet" id=1]
 0/name = "Temp Tile"
@@ -20,7 +22,14 @@
 0/shapes = [  ]
 0/z_index = 0
 
-[sub_resource type="StyleBoxFlat" id=4]
+[sub_resource type="Resource" id=3]
+script = ExtResource( 5 )
+item_id = "temp_1"
+amount = 20
+
+[sub_resource type="ConvexPolygonShape" id=4]
+
+[sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0, 0, 0, 0.509804 )
 
 [node name="map" type="Node2D"]
@@ -37,6 +46,16 @@ tile_data = PoolIntArray( -262150, 0, 0, -262149, 0, 0, -262148, 0, 0, -262147, 
 
 [node name="YSort" type="YSort" parent="."]
 
+[node name="object" parent="YSort" instance=ExtResource( 2 )]
+position = Vector2( -149.063, 69.9485 )
+type = "Item"
+data = SubResource( 3 )
+
+[node name="object2" parent="YSort" instance=ExtResource( 2 )]
+position = Vector2( -149.063, 69.9485 )
+type = "Item"
+data = SubResource( 4 )
+
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 0
 
@@ -45,6 +64,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 4 )
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -95,7 +115,7 @@ bbcode_enabled = true
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -144,6 +164,52 @@ text = "Press F to interact with object"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="player_inventory" type="Panel" parent="UILayer/ui_root"]
+anchor_left = 0.0732422
+anchor_top = 0.111667
+anchor_right = 0.333984
+anchor_bottom = 0.64
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="scroll" type="ScrollContainer" parent="UILayer/ui_root/player_inventory"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="grid" type="GridContainer" parent="UILayer/ui_root/player_inventory/scroll"]
+margin_right = 267.0
+margin_bottom = 317.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 5
+
+[node name="container_inventory" type="Panel" parent="UILayer/ui_root"]
+anchor_left = 0.356445
+anchor_top = 0.111667
+anchor_right = 0.617188
+anchor_bottom = 0.64
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="scroll" type="ScrollContainer" parent="UILayer/ui_root/container_inventory"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="grid" type="GridContainer" parent="UILayer/ui_root/container_inventory/scroll"]
+margin_right = 267.0
+margin_bottom = 317.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 5
 
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/resume" to="UILayer/ui_root" method="unpause"]
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/settings" to="UILayer/ui_root" method="settings"]

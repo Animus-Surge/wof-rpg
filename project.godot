@@ -8,10 +8,35 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Resource",
+"class": "ContainerObject",
+"language": "GDScript",
+"path": "res://scripts/interaction/container_obj.gd"
+}, {
+"base": "Resource",
+"class": "InteractionObject",
+"language": "GDScript",
+"path": "res://scripts/interaction/interaction_object.gd"
+}, {
+"base": "Resource",
+"class": "ItemObject",
+"language": "GDScript",
+"path": "res://scripts/interaction/item_obj.gd"
+} ]
+_global_script_class_icons={
+"ContainerObject": "",
+"InteractionObject": "",
+"ItemObject": ""
+}
+
 [application]
 
-config/name="wof-rpg2"
+config/name="WoF RPG"
 run/main_scene="res://scenes/loading_screen.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="wof_rpg"
+boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
 
 [autoload]
@@ -46,6 +71,12 @@ texture={
 "stream": false,
 "svg/scale": 1.0
 }
+
+[logging]
+
+file_logging/enable_file_logging=true
+file_logging/log_path="user://logs/wof_rpg.log"
+file_logging/max_log_files=10
 
 [physics]
 
