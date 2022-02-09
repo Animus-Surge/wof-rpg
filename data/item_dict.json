@@ -12,7 +12,7 @@
     "texture":"res://assets/textures/items/item_temp_2.png",
     "name":"Test Item 2",
     "description":"A test item",
-    "stack_size":100,
+    "stack_size":50,
     "type":"generic"
   },
   {

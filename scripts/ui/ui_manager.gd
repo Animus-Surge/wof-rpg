@@ -3,6 +3,9 @@ extends Control
 #Object scenes
 onready var inv_slot = load("res://objects/ui/inv_item.tscn")
 
+#Flags
+var interacting = false
+
 func _ready():
 	pass
 	
@@ -13,11 +16,14 @@ func _ready():
 	gstate.connect("mp_connected", self, "server_connected")
 # warning-ignore:return_value_discarded
 	pstate.connect("add_item", self, "add_item")
+# warning-ignore:return_value_discarded
+	pstate.connect("container_show", self, "show_container")
 	
 	#Hide all UI elements that are hidden by default
 	$pausemenu.hide()
 	$player_inventory.hide()
 	$container_inventory.hide()
+	$interact_label.hide()
 	
 	#Initial inventory initialization (After everything is loaded
 	for item in pstate.inventory: # item data contains item and amount
@@ -42,6 +48,11 @@ func _input(event):
 			if gstate.paused and $chatpanel/message_box.has_focus():
 				$chatpanel/message_box.release_focus()
 				gstate.paused = false
+				return
+			if $player_inventory.visible:
+				$player_inventory.hide()
+				if $container_inventory.visible:
+					hide_container(container_owner.data)
 				return
 			gstate.paused = !gstate.paused # Only applies to the client, never affects the multiplayer side
 			$pausemenu.visible = gstate.paused
@@ -74,11 +85,14 @@ func _input(event):
 				$chatpanel/message_box.grab_focus()
 				gstate.paused = true # Act like it's paused so all keystrokes get sent to the chat box
 		elif event.scancode == KEY_F: #TODO: keymapping work
-			pstate.interact()
+			if !interacting:
+				pstate.interact()
+				interacting = true
 		elif event.scancode == KEY_I:
 			if $player_inventory.visible:
 				$player_inventory.hide()
-				$container_inventory.hide()
+				if $container_inventory.visible:
+					hide_container(container_owner.data)
 			else:
 				$player_inventory.show()
 
@@ -107,34 +121,42 @@ func chat_message(message):
 
 #Inventory System
 
+var container_owner
+
 #Signal callbacks
 func show_inventory():
 	$player_inventory.show()
 
 func show_container(container_data):
+	container_owner = container_data.owner
+	
 	for _s in range(container_data.num_slots):
 		var islot = inv_slot.instance()
 		$container_inventory/scroll/grid.add_child(islot)
 	
 	for item in container_data.items:
-		var slot = $container_inventory/scroll/grid.get_child(item.slot_idx)
-		slot.set_item(item.item, item.amount)
+		var slot = $container_inventory/scroll/grid.get_child(item.slot)
+		
+		for i in gstate.item_data:
+			if i.id == item.item:
+				slot.set_item(i, item.amount)
 	
 	$container_inventory.show()
+	$player_inventory.show()
 
 func hide_container(container_data):
 	#Update the container data's contents
 	$container_inventory.hide()
+	interacting = false
 	
 	container_data.items.clear()
 	
 	var idx = 0
 	for slot in $container_inventory/scroll/grid.get_children():
 		if !slot.item.empty():
-			container_data.items.append({"item":slot.item, "amount":slot.amt, "slot_idx":idx})
+			container_data.items.append({"item":slot.item.id, "amount":slot.amt, "slot":idx})
 		idx += 1
 		slot.queue_free()
-	return container_data
 
 #Function to update slots if the player's pouch was upgraded
 func update_slots():
@@ -174,6 +196,9 @@ func _process(_delta):
 		$interact_label.show()
 	else:
 		$interact_label.hide()
+	
+	if !$container_inventory.visible: #TODO: check the other interaction UI systems
+		interacting = false
 	
 	#Inventory management
 	var index = 0

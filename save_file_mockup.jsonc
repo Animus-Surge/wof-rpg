@@ -1,0 +1,41 @@
+{
+  "save_name":"Unique name here", //Saves as unique_name.json (might use tres, we'll see)
+  //Player information
+  "position":{"x":10,"y":10},
+  "character":"character_id", //Saves are character based (except multiplayer), characters are saved elsewhere
+  //Inventory stuff
+  "inventory":[
+    {
+      "item_id":"item",
+      "amount":25,
+      "slot_idx":3
+    }
+    //...
+  ],
+  "inventory_slots":25,
+  "inventory_armor":{ //When armor and cosmetic items get added, they will show up here
+    "slot_head":"head_armor",
+    "slot_neck":"neck_armor",
+    "slot_torso":"torso_armor",
+    "slot_legs":"leg_armor",
+    "slot_tail":"tail_armor",
+    "slot_wings":"wing_armor"
+  },
+  "inventory_hotbar":{ //Quickbar? Used for consumables
+    "slot_1":"",
+    "slot_2":"",
+    "slot_3":"",
+    "slot_4":""
+  },
+  //World stuff
+  "objects":[
+    {
+      "type":"Item",
+      "location":{"x":0, "y":0},
+      "data":{
+        "item_id":"item",
+        "amount":10
+      }
+    }
+  ]
+}

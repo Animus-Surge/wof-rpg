@@ -229,16 +229,32 @@ puppet func recieve_packet_c(data):
 			# TODO: maybe have different types of messages, like a party chat, private chat, or something like that
 			emit_signal("chat_message", "[color=#" + ("00ffff" if data.sender_id == get_tree().get_network_unique_id() else "00ff00") + "]" + gstate.players[data.sender_id].uname + "[/color]" + (" [color=#ff00ff](private)[/color]: " if data.dm else ": ") + data.msg)
 
-# Singleplayer instance
+#####################################
+# Save Manager/Singleplayer Handler #
+#####################################
 
-func sp():
-# warning-ignore:return_value_discarded
-	connect("done", self, "spawn_player")
+#Singleplayer instance ONLY
+
+func load_save(save_name, save_path = "user://saves/"):
+	auto_hide_loadscreen = false
 	load_scene("map")
-
-func spawn_player():
-	get_node("/root/map").spawn_player("player", Vector2(0, 0), {})
-	disconnect("done", self, "spawn_player")
+	
+	var full_path = save_path + save_name + ".json"
+	
+	var save_file = File.new()
+	var err = save_file.open(full_path, File.READ)
+	if err != OK:
+		pass
+	
+	var data = JSON.parse(save_file.get_as_text()).result
+	
+	#yadda yadda waiting for the map to finish loading
+	while(loader): pass
+	
+	get_node("/root/map").spawn_player("player", data.position, {})
+	
+	auto_hide_loadscreen = true
+	get_node("/root/loading_screen").hide()
 
 #################
 # Scene Manager #

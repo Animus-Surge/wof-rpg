@@ -6,6 +6,7 @@ extends Node
 
 #signals
 signal add_item(item, amount)
+signal container_show(data)
 
 #Player display stuff
 var tribe_id # Contains the ID for the tribe (i.e. "iw") Hybrids look like this: "iw-sw" and custom tribes (addons) look like this: "cs:<tribe_id>"
@@ -44,5 +45,7 @@ func interact():
 			else:
 				emit_signal("add_item", i, interacting_with.data.amount)
 				#interacting_with.queue_free()
+		"Container":
+			emit_signal("container_show", {"owner":interacting_with,"num_slots":interacting_with.data.slots, "items":interacting_with.data.items})
 		_:
 			pass #TODO: add the rest of them

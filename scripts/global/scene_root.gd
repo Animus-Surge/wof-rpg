@@ -24,4 +24,4 @@ func jserver_press():
 	gstate.join_server(ip)
 
 func sp_press():
-	gstate.sp()
+	gstate.load_save("test_save", "res://data/")

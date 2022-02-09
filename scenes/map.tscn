@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scripts/global/maproot.gd" type="Script" id=1]
 [ext_resource path="res://objects/entity/interactable_object.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/tiles/tile-temp.png" type="Texture" id=3]
 [ext_resource path="res://scripts/ui/ui_manager.gd" type="Script" id=4]
 [ext_resource path="res://scripts/interaction/item_obj.gd" type="Script" id=5]
+[ext_resource path="res://scripts/interaction/container_obj.gd" type="Script" id=6]
 
 [sub_resource type="TileSet" id=1]
 0/name = "Temp Tile"
@@ -22,14 +23,30 @@
 0/shapes = [  ]
 0/z_index = 0
 
-[sub_resource type="Resource" id=3]
+[sub_resource type="Resource" id=2]
 script = ExtResource( 5 )
 item_id = "temp_1"
-amount = 20
+amount = 1
 
-[sub_resource type="ConvexPolygonShape" id=4]
+[sub_resource type="Resource" id=3]
+script = ExtResource( 5 )
+item_id = "temp_2"
+amount = 1
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="Resource" id=4]
+script = ExtResource( 6 )
+slots = 10
+items = [ {
+"amount": 10,
+"item": "temp_1",
+"slot": 0
+}, {
+"amount": 10,
+"item": "temp_3",
+"slot": 2
+} ]
+
+[sub_resource type="StyleBoxFlat" id=5]
 bg_color = Color( 0, 0, 0, 0.509804 )
 
 [node name="map" type="Node2D"]
@@ -49,11 +66,16 @@ tile_data = PoolIntArray( -262150, 0, 0, -262149, 0, 0, -262148, 0, 0, -262147, 
 [node name="object" parent="YSort" instance=ExtResource( 2 )]
 position = Vector2( -149.063, 69.9485 )
 type = "Item"
+data = SubResource( 2 )
+
+[node name="object3" parent="YSort" instance=ExtResource( 2 )]
+position = Vector2( -114.236, -79.8075 )
+type = "Item"
 data = SubResource( 3 )
 
 [node name="object2" parent="YSort" instance=ExtResource( 2 )]
-position = Vector2( -149.063, 69.9485 )
-type = "Item"
+position = Vector2( 7.92091, 126.509 )
+type = "Container"
 data = SubResource( 4 )
 
 [node name="UILayer" type="CanvasLayer" parent="."]
@@ -115,7 +137,7 @@ bbcode_enabled = true
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -205,7 +227,7 @@ __meta__ = {
 }
 
 [node name="grid" type="GridContainer" parent="UILayer/ui_root/container_inventory/scroll"]
-margin_right = 267.0
+margin_right = 267.001
 margin_bottom = 317.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
