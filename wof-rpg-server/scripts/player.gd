@@ -1,14 +1,19 @@
-extends Node2D
+extends KinematicBody2D
 
-var velocity = Vector2()
+const SPEED = 100
 
-puppet var pos = Vector2()
-puppet var vel = Vector2()
+var vel = Vector2()
 
-func _process(delta):
-	position = pos
-	velocity = vel
+puppet var pvel = Vector2()
+puppet var ppos = Vector2()
+
+func _ready():
+	ppos = position
+
+func _process(_delta):
+	position = ppos
+	vel = pvel
 	
-	position += velocity * delta
+	vel = move_and_slide(vel)
 	
-	pos = position
+	ppos = position

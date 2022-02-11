@@ -6,9 +6,6 @@ export (String) var custom_props
 func _ready():
 	if scene_name.empty(): scene_name = name
 	if gstate.debug: gstate.current_scene = scene_name
-	if custom_props.begins_with("scene_load"):
-		var scene = custom_props.split(" ")[1]
-		gstate.load_scene(scene)
 
 func mp_press():
 	$Panel.show()

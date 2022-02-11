@@ -34,19 +34,6 @@ var current_scene
 func _ready():
 	set_process(false)
 	
-	#Connect multiplayer signals
-# warning-ignore:return_value_discarded
-	get_tree().connect("network_peer_connected", self, "player_connected")
-# warning-ignore:return_value_discarded
-	get_tree().connect("network_peer_disconnected", self, "player_disconnected")
-	
-# warning-ignore:return_value_discarded
-	get_tree().connect("connected_to_server", self, "connection_success")
-# warning-ignore:return_value_discarded
-	get_tree().connect("connection_failed", self, "connection_failed")
-# warning-ignore:return_value_discarded
-	get_tree().connect("server_disconnected", self, "disconnected")
-	
 	if !debug:
 		current_scene = "loading_screen"
 	
@@ -59,6 +46,44 @@ func _ready():
 		item_data = JSON.parse(file.get_as_text()).result
 		print("GAMESYS: Loaded item data file (res://data/item_dict.json)")
 	file.close()
+	
+	#Server signals
+# warning-ignore:return_value_discarded
+	get_tree().connect("network_peer_connected", self, "player_connected")
+# warning-ignore:return_value_discarded
+	get_tree().connect("network_peer_disconnected", self, "player_disconnected")
+	
+	#Check dedicated server file in exe dir
+	var directory = OS.get_executable_path().get_base_dir()
+	print("SERVER: Checking for server.json...")
+	var f = File.new()
+	var exists = f.open(directory + "/server.json", File.READ)
+	if exists == OK:
+		var sdata = JSON.parse(f.get_as_text()).result
+		if sdata.has_all(["port", "name", "description", "max_players"]):
+			print("SERVER: Loading server.json...")
+			mult_port = sdata.port
+			mult_max_players = sdata.max_players
+			sname = sdata.name
+			sdesc = sdata.description
+			server_create(mult_port)
+		else:
+			printerr("SERVER: Error: server.json missing required keys. Make sure the file has ALL of these keys: port, name, description, max_players")
+			get_tree().quit()
+		return
+	else:
+		print("SERVER: File not found or inaccessible. Starting client instance")
+	
+	#Client signals
+# warning-ignore:return_value_discarded
+	get_tree().connect("connected_to_server", self, "connection_success")
+# warning-ignore:return_value_discarded
+	get_tree().connect("connection_failed", self, "connection_failed")
+# warning-ignore:return_value_discarded
+	get_tree().connect("server_disconnected", self, "disconnected")
+	
+	if !debug:
+		load_scene("menus")
 
 #Menu flags
 var emsg_en = false
@@ -73,15 +98,13 @@ var username
 ######################
 
 # To Do list:
-# - chat
 # - party system
-# - LAN server handling
 # - Dedicated server systems
 
 #Player data format
 #"pid"{
 #	"username":string,
-#	"uuid":string, < Universal ID when playing online with an account, otherwise no caching will occur
+#	"guid":string, < Universal ID when playing online with an account, otherwise no caching will occur
 #	"character-id":string, < load from server database (local file in dedicated server, or load from data in this dictionary and store locally)
 #	"flags":string, < A - admin, M - mod, D - dev, O - other (use server database to manage roles of the player)
 #	"cdata":dictionary < Contains all the data for characters in case no cached version is available
@@ -90,16 +113,19 @@ var username
 #Flags
 var deliberate_disconnect = false
 var attempt = 1 #Number of connection attempts made, default 1
-#...
-
-var max_attempts = 3 #Only try to connect 3 times, then fail
 
 var players = {}
 
 #Server Management
 
+var max_attempts = 3 #Only try to connect 3 times, then fail
+
 var mult_port
 var mult_ip
+var mult_max_players
+
+var sname
+var sdesc
 
 puppetsync func unregister_player(id):
 	players.erase(id)
@@ -171,7 +197,13 @@ func connection_failed():
 	print("CONNECTION: Failed to connect to: " + mult_ip + ":" + str(mult_port))
 	emit_signal("mp_fail")
 	auto_hide_loadscreen = true
-	load_scene("menus")
+	if(attempt >= max_attempts):
+		load_scene("menus")
+	else:
+		print("CONNECTION: Attempt " + str(attempt))
+		attempt += 1
+		get_tree().set_network_peer(null)
+		map_ready()
 
 func disconnected():
 	print("CONNECTION: Disconnected. Deliberate: " + str(deliberate_disconnect))
@@ -181,7 +213,8 @@ func disconnected():
 	load_scene("menus")
 
 func map_ready():
-	disconnect("done", self, "map_ready")
+	if(is_connected("done", self, "map_ready")):
+		disconnect("done", self, "map_ready")
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client(mult_ip, mult_port)
 	get_tree().set_network_peer(peer)
@@ -248,10 +281,9 @@ func load_save(save_name, save_path = "user://saves/"):
 	
 	var data = JSON.parse(save_file.get_as_text()).result
 	
-	#yadda yadda waiting for the map to finish loading
-	while(loader): pass
+	yield(self, "done")
 	
-	get_node("/root/map").spawn_player("player", data.position, {})
+	get_node("/root/map").spawn_player("player", Vector2(data.position.x, data.position.y), {})
 	
 	auto_hide_loadscreen = true
 	get_node("/root/loading_screen").hide()

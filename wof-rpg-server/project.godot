@@ -16,7 +16,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
-gstate="*res://scripts/gstate.gd"
+gstate="*res://scripts/state.gd"
 
 [physics]
 
