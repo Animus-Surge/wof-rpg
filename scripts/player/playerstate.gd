@@ -35,6 +35,9 @@ var interacting_with # Null if not interacting with anything
 
 func interact():
 	if !interacting_with: return
+	if interacting_with.data == null: 
+		push_warning("PSTATE: Warning: Can't interact with an interactable with null data field")
+		return
 	match interacting_with.type:
 		"Item":
 			var i = {}
@@ -47,5 +50,9 @@ func interact():
 				#interacting_with.queue_free()
 		"Container":
 			emit_signal("container_show", {"owner":interacting_with,"num_slots":interacting_with.data.slots, "items":interacting_with.data.items})
+		"NPC":
+			#Find the interaction with the ID specified
+			
+			pass
 		_:
 			pass #TODO: add the rest of them

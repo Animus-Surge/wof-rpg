@@ -19,6 +19,11 @@ signal mp_fail()
 #Global data
 var item_data
 
+#Save specific data
+var interaction_data
+var quest_data
+var current_save #Used for loading and saving game state
+
 #Debug mode
 const debug = false
 
@@ -27,7 +32,7 @@ var paused = false
 var mplayer = false
 var hosting_server = false
 
-var auto_hide_loadscreen = true # Used for multiplayer system
+var auto_hide_loadscreen = true
 
 var current_scene
 
@@ -36,6 +41,8 @@ func _ready():
 	
 	if !debug:
 		current_scene = "loading_screen"
+		auto_hide_loadscreen = false
+		load_scene("menus")
 	
 	#Load data
 	var file = File.new()
@@ -82,8 +89,10 @@ func _ready():
 # warning-ignore:return_value_discarded
 	get_tree().connect("server_disconnected", self, "disconnected")
 	
-	if !debug:
-		load_scene("menus")
+	yield(self, "done")
+	
+	hide_loadingscreen()
+	auto_hide_loadscreen = true
 
 #Menu flags
 var emsg_en = false
@@ -134,12 +143,11 @@ puppetsync func unregister_player(id):
 #LAN multiplayer system (local server management)
 func server_create(port = 25622):
 # warning-ignore:return_value_discarded
-	connect("done", self, "create_lan")
 	mult_port = port
 	load_scene("map")
-
-func create_lan():
-	disconnect("done", self, "create_lan")
+	
+	yield(self, "done")
+	
 	mplayer = true
 	hosting_server = true
 	var peer = NetworkedMultiplayerENet.new()
@@ -183,9 +191,10 @@ func join_server(ip, port=25622):
 	mult_port = port
 	mult_ip = ip
 # warning-ignore:return_value_discarded
-	connect("done", self, "map_ready")
 	auto_hide_loadscreen = false
 	load_scene("map")
+	yield(self, "done")
+	join()
 
 func connection_success():
 	print("CONNECTION: Connected successfully to: " + mult_ip + ":" + str(mult_port))
@@ -203,7 +212,7 @@ func connection_failed():
 		print("CONNECTION: Attempt " + str(attempt))
 		attempt += 1
 		get_tree().set_network_peer(null)
-		map_ready()
+		join()
 
 func disconnected():
 	print("CONNECTION: Disconnected. Deliberate: " + str(deliberate_disconnect))
@@ -212,9 +221,7 @@ func disconnected():
 	auto_hide_loadscreen = true
 	load_scene("menus")
 
-func map_ready():
-	if(is_connected("done", self, "map_ready")):
-		disconnect("done", self, "map_ready")
+func join():
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client(mult_ip, mult_port)
 	get_tree().set_network_peer(peer)
@@ -251,6 +258,8 @@ remote func recieve_packet(sender_id, data):
 				rpc("recieve_packet_c", {"type":"chatmsg", "sender_id":data.sender_id, "msg":data.msg, "dm":false})
 		"trade":
 			pass
+		"object_update":
+			pass
 
 puppet func recieve_packet_c(data):
 	print("PACKET_MGR: Recieved packet from server. Content: " + str(data))
@@ -259,12 +268,20 @@ puppet func recieve_packet_c(data):
 			print(data.content)
 		"chatmsg":
 			print("PACKET_MGR: Chat: " + data.msg)
-			# TODO: maybe have different types of messages, like a party chat, private chat, or something like that
+			#TODO: maybe have different types of messages, like a party chat, private chat, or something like that
+			#TODO: Strip bbcode tags from the message to avoid any funny business
+			
 			emit_signal("chat_message", "[color=#" + ("00ffff" if data.sender_id == get_tree().get_network_unique_id() else "00ff00") + "]" + gstate.players[data.sender_id].uname + "[/color]" + (" [color=#ff00ff](private)[/color]: " if data.dm else ": ") + data.msg)
+		"trade":
+			pass
+		"object_update":
+			pass
 
 #####################################
 # Save Manager/Singleplayer Handler #
 #####################################
+
+#See save_tree.txt for save directory format
 
 #Singleplayer instance ONLY
 
@@ -272,21 +289,41 @@ func load_save(save_name, save_path = "user://saves/"):
 	auto_hide_loadscreen = false
 	load_scene("map")
 	
-	var full_path = save_path + save_name + ".json"
+	current_save = save_name
 	
-	var save_file = File.new()
-	var err = save_file.open(full_path, File.READ)
-	if err != OK:
-		pass
+	var full_path = save_path + save_name + "/save.json" #Converting to user dir format
 	
-	var data = JSON.parse(save_file.get_as_text()).result
+	var data = load_data_file(full_path)
 	
 	yield(self, "done")
+	
+	if data.empty():
+		printerr("ERROR: Could not find any save data... aborting")
+		load_scene("menus")
+		auto_hide_loadscreen = true
+		return
 	
 	get_node("/root/map").spawn_player("player", Vector2(data.position.x, data.position.y), {})
 	
 	auto_hide_loadscreen = true
-	get_node("/root/loading_screen").hide()
+	get_node("/root/loading_screen").hide_ls()
+
+#################
+# Loader System #
+#################
+
+func load_data_file(path) -> Dictionary:
+	var file = File.new()
+	var err = file.open(path, File.READ)
+	if err != OK:
+		printerr("SAVESYS: Error: Failed to load data file " + path)
+		return {} 
+	print("SAVESYS: Loaded data file from path: " + path)
+	return JSON.parse(file.get_as_text()).result
+
+func save_game_file(file_name, data, is_global = false): #Saves to game save directory unless global file
+	var directory = "user://" + ("saves/" + current_save if !is_global else "")
+	print("SAVESYS: Saving data file: " + directory)
 
 #################
 # Scene Manager #
@@ -316,7 +353,7 @@ func load_scene(scene_name):
 	
 	if current_scene != "loading_screen":
 		get_node("/root/" + current_scene).queue_free()
-		get_node("/root/loading_screen").show()
+		get_node("/root/loading_screen").show_ls()
 	scene = scene_name
 	set_process(true)
 	
@@ -352,8 +389,8 @@ func set_scene(data):
 	current_scene = scene
 	get_node("/root").add_child(data.instance())
 	if auto_hide_loadscreen:
-		get_node("/root/loading_screen").hide()
+		get_node("/root/loading_screen").hide_ls()
 
 func hide_loadingscreen():
 	if !loader:
-		get_node("/root/loading_screen").hide()
+		get_node("/root/loading_screen").hide_ls()

@@ -163,7 +163,8 @@ func update_slots():
 	pass
 
 func add_item(item, amount = 1):
-	print("INVMGR: add_item " + item.id + " amount " + str(amount))
+	if gstate.debug:
+		print("INVMGR: add_item " + item.id + " amount " + str(amount))
 	var first_empty_slot
 	#Check each slot
 # warning-ignore:shadowed_variable

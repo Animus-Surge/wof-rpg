@@ -1,0 +1,4 @@
+This file outlines the directory tree of the user data folder.
+
+In the engine, the user data directory is prefixed with the
+"user://" protocol handler

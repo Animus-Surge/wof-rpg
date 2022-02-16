@@ -1,0 +1,22 @@
+We are moving away from using a single file for saves, as with the ever-growing
+complexity of the game it becomes majorly inefficient. Therefore we are using
+a directory based system to save games. This file outlines the directory tree
+of a typical save.
+
+Items ending in a forward slash / are folders.
+
+NOTICE: This directory tree is NOT final in any way. This will be changed and
+items appended and removed as development progresses.
+
+Saves are stored in the following directory:
+${application-data}/wof-rpg/saves
+
+save_name/
+- data/
+|- quests.json
+|- skill_tree.json
+|- interactions.json
+- world/
+|- objects.json
+|- map.json
+- save.json

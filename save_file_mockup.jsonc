@@ -1,3 +1,5 @@
+//Obsolete, moving to directory system. See save_tree.txt for more information
+
 {
   "save_name":"Unique name here", //Saves as unique_name.json (might use tres, we'll see)
   //Player information
