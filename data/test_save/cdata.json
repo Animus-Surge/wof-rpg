@@ -1,0 +1,20 @@
+{
+  "position":{"x":10,"y":10},
+  "character":"unimpl",
+  "inventory":[],
+  "inventory_slots":25,
+  "inventory_armor":{ 
+    "slot_head":"unimpl",
+    "slot_neck":"unimpl",
+    "slot_torso":"unimpl",
+    "slot_legs":"unimpl",
+    "slot_tail":"unimpl",
+    "slot_wings":"unimpl"
+  },
+  "inventory_hotbar":{ 
+    "slot_1":"unimpl",
+    "slot_2":"unimpl",
+    "slot_3":"unimpl",
+    "slot_4":"unimpl"
+  }
+}

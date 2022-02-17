@@ -53,6 +53,7 @@ func _input(event):
 				$player_inventory.hide()
 				if $container_inventory.visible:
 					hide_container(container_owner.data)
+				
 				return
 			gstate.paused = !gstate.paused # Only applies to the client, never affects the multiplayer side
 			$pausemenu.visible = gstate.paused

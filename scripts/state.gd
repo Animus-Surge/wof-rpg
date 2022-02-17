@@ -69,11 +69,10 @@ func _ready():
 		var sdata = JSON.parse(f.get_as_text()).result
 		if sdata.has_all(["port", "name", "description", "max_players"]):
 			print("SERVER: Loading server.json...")
-			mult_port = sdata.port
 			mult_max_players = sdata.max_players
 			sname = sdata.name
 			sdesc = sdata.description
-			server_create(mult_port)
+			server_create(sdata.port)
 		else:
 			printerr("SERVER: Error: server.json missing required keys. Make sure the file has ALL of these keys: port, name, description, max_players")
 			get_tree().quit()
@@ -142,18 +141,21 @@ puppetsync func unregister_player(id):
 
 #LAN multiplayer system (local server management)
 func server_create(port = 25622):
-# warning-ignore:return_value_discarded
-	mult_port = port
+	#Load the map
 	load_scene("map")
 	
 	yield(self, "done")
 	
+	#Now load the save
+	
+	#And create the server
 	mplayer = true
 	hosting_server = true
 	var peer = NetworkedMultiplayerENet.new()
-	peer.create_server(mult_port, 20) # All local server instances will be limited to 20 players
+	peer.create_server(port, mult_max_players) # All local server instances will be limited to 20 players
 	get_tree().set_network_peer(peer)
 	print("SERVER: Up on port: " + str(mult_port))
+	hide_loadingscreen() #Useful if the server's running in graphical mode
 
 func player_connected(id):
 	print("CONNECT: Player " + str(id) + " connected.")
@@ -170,6 +172,12 @@ remote func populate():
 	print("POPULATE: Player " + str(cid) + " populate() call")
 	
 	var map = get_node("/root/map")
+	
+	#Spawn the objects on the player's map
+	for object in map.get_children():
+		if players.has(object.name): continue #Ignore player objects
+		
+	
 	for plr in players:
 		map.rpc_id(cid, "spawn_player", plr, Vector2.ZERO, players[plr])
 	
@@ -260,6 +268,8 @@ remote func recieve_packet(sender_id, data):
 			pass
 		"object_update":
 			pass
+		"object_data_request":
+			pass
 
 puppet func recieve_packet_c(data):
 	print("PACKET_MGR: Recieved packet from server. Content: " + str(data))
@@ -275,6 +285,8 @@ puppet func recieve_packet_c(data):
 		"trade":
 			pass
 		"object_update":
+			pass
+		"object_data":
 			pass
 
 #####################################

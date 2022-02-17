@@ -20,3 +20,4 @@ save_name/
 |- objects.json
 |- map.json
 - save.json
+- cdata.json
