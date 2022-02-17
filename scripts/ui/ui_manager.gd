@@ -18,6 +18,8 @@ func _ready():
 	pstate.connect("add_item", self, "add_item")
 # warning-ignore:return_value_discarded
 	pstate.connect("container_show", self, "show_container")
+# warning-ignore:return_value_discarded
+	pstate.connect("interact", self, "_npc_interact")
 	
 	#Hide all UI elements that are hidden by default
 	$pausemenu.hide()
@@ -189,6 +191,21 @@ func add_item(item, amount = 1):
 # warning-ignore:unused_argument
 func rmv_item(item):
 	pass #TODO
+
+# Interaction system
+
+var interaction
+var current_part
+
+func _npc_interact(data):
+	gstate.paused = true
+	#TODO
+
+func update_interaction():
+	pass #TODO
+
+func option_selected(action):
+	pass #TODO: decode the action parameter
 
 # Stuff that needs to be checked every frame
 

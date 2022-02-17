@@ -91,6 +91,7 @@ __meta__ = {
 }
 
 [node name="chatpanel" type="Panel" parent="UILayer/ui_root"]
+visible = false
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -176,6 +177,7 @@ margin_bottom = 42.0
 text = "quit"
 
 [node name="interact_label" type="Label" parent="UILayer/ui_root"]
+visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -95.5
@@ -188,6 +190,7 @@ __meta__ = {
 }
 
 [node name="player_inventory" type="Panel" parent="UILayer/ui_root"]
+visible = false
 anchor_left = 0.0732422
 anchor_top = 0.111667
 anchor_right = 0.333984
@@ -211,6 +214,7 @@ size_flags_vertical = 3
 columns = 5
 
 [node name="container_inventory" type="Panel" parent="UILayer/ui_root"]
+visible = false
 anchor_left = 0.356445
 anchor_top = 0.111667
 anchor_right = 0.617188
@@ -232,6 +236,58 @@ margin_bottom = 317.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 5
+
+[node name="npc_interaction" type="Panel" parent="UILayer/ui_root"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -438.0
+margin_top = -197.0
+margin_right = 438.0
+margin_bottom = -40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="optionscroll" type="ScrollContainer" parent="UILayer/ui_root/npc_interaction"]
+anchor_left = 0.748
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -0.228027
+margin_top = 12.0
+margin_right = -10.0
+margin_bottom = -13.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="optioncontainer" type="VBoxContainer" parent="UILayer/ui_root/npc_interaction/optionscroll"]
+margin_right = 210.98
+margin_bottom = 132.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="UILayer/ui_root/npc_interaction/optionscroll/optioncontainer"]
+margin_right = 210.0
+margin_bottom = 20.0
+text = "Option 1"
+
+[node name="textscroll" type="ScrollContainer" parent="UILayer/ui_root/npc_interaction"]
+anchor_right = 0.73
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 12.0
+margin_right = -0.0299988
+margin_bottom = -13.0
+
+[node name="speech" type="Label" parent="UILayer/ui_root/npc_interaction/textscroll"]
+margin_right = 629.45
+margin_bottom = 132.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+valign = 1
+autowrap = true
 
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/resume" to="UILayer/ui_root" method="unpause"]
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/settings" to="UILayer/ui_root" method="settings"]

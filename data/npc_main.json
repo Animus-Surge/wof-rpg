@@ -1,0 +1,35 @@
+{
+  "test_npc":{
+    "display":"Someone",
+    "reputation":0.5,
+    "friendliness":0,
+    "hostility":0,
+    "interaction":{
+      "entry":{
+        "speech":"Hello testing 123",
+        "options":[
+          {
+            "text":"Hello there",
+            "action":[
+              {
+                "type":"label",
+                "label":"test_1"
+              }
+            ]
+          },
+          {
+            "text":"Goodbye",
+            "action":[
+              {
+                "type":"exit"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "has_inventory":false,
+    "trader":false,
+    "merchant":false
+  }
+}
