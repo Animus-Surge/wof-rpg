@@ -39,6 +39,8 @@ var current_scene
 func _ready():
 	set_process(false)
 	
+	fb.fb_init()
+	
 	if !debug:
 		current_scene = "loading_screen"
 		auto_hide_loadscreen = false
@@ -89,6 +91,8 @@ func _ready():
 	get_tree().connect("server_disconnected", self, "disconnected")
 	
 	yield(self, "done")
+	
+	fb.fb_signup("esfloyd9341@gmail.com", "some_password")
 	
 	hide_loadingscreen()
 	auto_hide_loadscreen = true

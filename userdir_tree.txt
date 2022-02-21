@@ -2,3 +2,19 @@ This file outlines the directory tree of the user data folder.
 
 In the engine, the user data directory is prefixed with the
 "user://" protocol handler
+
+wof-rpg/
+-bin/              # Folder containing all game binaries
+--wof-rpg.exe      # Windows specific, though that will change depending on the operating system
+--wof-rpg.pck      # Game data file
+-characters/       # Folder containing all saved characters for the player
+--...              # TODO
+-data/             # Folder containing all data related to the game
+--settings.json
+--login.dat
+--...              # Might need to add more, who knows
+-saves/            # Save data
+--...
+-icon.ico          # Desktop shortcut icon
+-uninst000.exe     # Uninstall crap, operating system specific
+-uninst000.dat
