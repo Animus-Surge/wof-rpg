@@ -1,5 +1,7 @@
 extends Node
 
+
+
 #TODO: implement firebase handling for user management and stuff
 #Alternatively, we might use the python launcher for this instead.
 
@@ -21,7 +23,7 @@ func fb_login(email, passwd):
 
 func fb_signup(email, passwd):
 	if !client: 
-		printerr("ERROR: HTTPRequest node not initialized, no way to log in.")
+		printerr("ERROR: HTTPRequest node not initialized")
 		return
 	#TODO: actually do error checking
 	var body = {
@@ -32,7 +34,12 @@ func fb_signup(email, passwd):
 	client.request("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=", [], true, HTTPClient.METHOD_POST, JSON.print(body))
 	
 	var result = yield(client, "request_completed") as Array
-	print(result[3].get_string_from_utf8())
+	print(result)
+
+func fb_anonym_signin():
+	if !client:
+		printerr("ERROR: HTTPRequest node not initialized")
+		return
 
 #Database functions
 
