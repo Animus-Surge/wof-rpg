@@ -48,11 +48,11 @@ items = [ {
 "slot": 2
 } ]
 
-[sub_resource type="Resource" id=6]
+[sub_resource type="Resource" id=5]
 script = ExtResource( 8 )
 id = "test_npc"
 
-[sub_resource type="StyleBoxFlat" id=5]
+[sub_resource type="StyleBoxFlat" id=6]
 bg_color = Color( 0, 0, 0, 0.509804 )
 
 [node name="map" type="Node2D"]
@@ -87,7 +87,7 @@ data = SubResource( 4 )
 [node name="object4" parent="YSort" instance=ExtResource( 2 )]
 position = Vector2( 164, 38 )
 type = "NPC"
-data = SubResource( 6 )
+data = SubResource( 5 )
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 0
@@ -149,7 +149,7 @@ bbcode_enabled = true
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 5 )
+custom_styles/panel = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

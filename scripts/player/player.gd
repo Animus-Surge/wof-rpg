@@ -38,5 +38,8 @@ func _process(_delta):
 	
 	vel = move_and_slide(vel)
 	
+	#TODO: break this out in network system
+	$RayCast2D.look_at(get_global_mouse_position())
+	
 	if gstate.mplayer and !is_network_master():
 		ppos = position

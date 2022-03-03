@@ -6,9 +6,7 @@ onready var inv_slot = load("res://objects/ui/inv_item.tscn")
 #Flags
 var interacting = false
 
-func _ready():
-	pass
-	
+func _ready():	
 	#Connect all the helper signals
 # warning-ignore:return_value_discarded
 	gstate.connect("chat_message", self, "chat_message")
@@ -56,7 +54,6 @@ func _input(event):
 				$player_inventory.hide()
 				if $container_inventory.visible:
 					hide_container(container_owner.data)
-				
 				return
 			if interacting:
 				interacting = false
@@ -96,7 +93,6 @@ func _input(event):
 		elif event.scancode == KEY_F: #TODO: keymapping work
 			if !interacting:
 				pstate.interact()
-				interacting = true
 		elif event.scancode == KEY_I:
 			if $player_inventory.visible:
 				$player_inventory.hide()
@@ -261,7 +257,7 @@ func _process(_delta):
 	else:
 		$interact_label.hide()
 	
-	if !$container_inventory.visible: #TODO: check the other interaction UI systems
+	if !$container_inventory.visible and !$npc_interaction.visible: #TODO: check the other interaction UI systems
 		interacting = false
 	
 	#Inventory management
