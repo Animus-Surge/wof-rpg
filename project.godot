@@ -23,11 +23,17 @@ _global_script_classes=[ {
 "class": "ItemObject",
 "language": "GDScript",
 "path": "res://scripts/interaction/item_obj.gd"
+}, {
+"base": "Resource",
+"class": "NPCObject",
+"language": "GDScript",
+"path": "res://scripts/interaction/npc_obj.gd"
 } ]
 _global_script_class_icons={
 "ContainerObject": "",
 "InteractionObject": "",
-"ItemObject": ""
+"ItemObject": "",
+"NPCObject": ""
 }
 
 [application]

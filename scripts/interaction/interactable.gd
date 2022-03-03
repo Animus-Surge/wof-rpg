@@ -17,6 +17,7 @@ func _area_entered(body):
 	entered_body = body.name
 	if !pstate.interacting_with:
 		pstate.interacting_with = self
+		pstate.interact_label_text = "Press F to " + ("pick up item" if type == "Item" else ("open chest" if type == "Container" else ("talk to Surge" if type == "NPC" else ("flip the lever" if type == "switch" else "UNKNOWN"))))
 
 func _area_exited(body):
 	if body.name == entered_body:

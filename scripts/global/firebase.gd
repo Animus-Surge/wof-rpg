@@ -18,7 +18,7 @@ func fb_init(): #This function creates the httpclient that is required for this 
 
 #Also will need a debug mode
 
-func fb_login(email, passwd):
+func fb_login(_email, _passwd):
 	pass
 
 func fb_signup(email, passwd):
@@ -43,5 +43,5 @@ func fb_anonym_signin():
 
 #Database functions
 
-func fb_dbget(path):
+func fb_dbget(_path):
 	pass

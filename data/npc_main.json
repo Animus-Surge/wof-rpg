@@ -26,6 +26,19 @@
             ]
           }
         ]
+      },
+      "test_1":{
+        "speech":"Testing 456!",
+        "options":[
+          {
+            "text":"Hewwo",
+            "action":[
+              {
+                "type":"exit"
+              }
+            ]
+          }
+        ]
       }
     },
     "has_inventory":false,

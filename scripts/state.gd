@@ -39,7 +39,7 @@ var current_scene
 func _ready():
 	set_process(false)
 	
-	fb.fb_init()
+	#fb.fb_init()
 	
 	if !debug:
 		current_scene = "loading_screen"
@@ -92,7 +92,7 @@ func _ready():
 	
 	yield(self, "done")
 	
-	fb.fb_signup("esfloyd9341@gmail.com", "some_password")
+	#fb.fb_signup("esfloyd9341@gmail.com", "some_password")
 	
 	hide_loadingscreen()
 	auto_hide_loadscreen = true
@@ -321,6 +321,8 @@ func load_save(save_name, save_path = "user://saves/"):
 	
 	get_node("/root/map").spawn_player("player", Vector2(data.position.x, data.position.y), {})
 	
+	interaction_data = load_data_file("res://data/npc_main.json")
+	
 	auto_hide_loadscreen = true
 	get_node("/root/loading_screen").hide_ls()
 
@@ -337,9 +339,10 @@ func load_data_file(path) -> Dictionary:
 	print("SAVESYS: Loaded data file from path: " + path)
 	return JSON.parse(file.get_as_text()).result
 
-func save_game_file(file_name, data, is_global = false): #Saves to game save directory unless global file
+func save_game_file(_file_name, _data, is_global = false): #Saves to game save directory unless global file
 	var directory = "user://" + ("saves/" + current_save if !is_global else "")
 	print("SAVESYS: Saving data file: " + directory)
+	#TODO
 
 #################
 # Scene Manager #

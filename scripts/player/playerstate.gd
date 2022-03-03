@@ -27,12 +27,15 @@ var inv_size = 25
 func _ready():
 	for _i in range(inv_size):
 		inventory.append({})
+	
+	interacting_with = null
 
 #Skill tree stuff
 # TODO
 
 #Interaction manager
-var interacting_with # Null if not interacting with anything
+var interacting_with = null # Null if not interacting with anything
+var interact_label_text = "Press F to ..."
 
 func interact():
 	if !interacting_with: return
@@ -57,6 +60,5 @@ func interact():
 				emit_signal("interact", gstate.interaction_data.get(interacting_with.data.id))
 			else:
 				printerr("PSTATE: No interaction exists with ID: " + interacting_with.data.id)
-			pass
 		_:
 			pass #TODO: add the rest of them

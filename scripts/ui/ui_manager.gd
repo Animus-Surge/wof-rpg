@@ -26,6 +26,7 @@ func _ready():
 	$player_inventory.hide()
 	$container_inventory.hide()
 	$interact_label.hide()
+	$npc_interaction.hide()
 	
 	#Initial inventory initialization (After everything is loaded
 	for item in pstate.inventory: # item data contains item and amount
@@ -56,6 +57,11 @@ func _input(event):
 				if $container_inventory.visible:
 					hide_container(container_owner.data)
 				
+				return
+			if interacting:
+				interacting = false
+				gstate.paused = false
+				$npc_interaction.hide()
 				return
 			gstate.paused = !gstate.paused # Only applies to the client, never affects the multiplayer side
 			$pausemenu.visible = gstate.paused
@@ -194,24 +200,63 @@ func rmv_item(item):
 
 # Interaction system
 
+onready var button_script = load("res://scripts/ui/interaction_button.gd")
+
+onready var options_container = $npc_interaction/optionscroll/optioncontainer
+onready var speech_container = $npc_interaction/textscroll/speech
+
 var interaction
 var current_part
 
 func _npc_interact(data):
 	gstate.paused = true
-	#TODO
+	interaction = data.interaction
+	current_part = data.interaction.entry
+	interacting = true
+	$npc_interaction.show()
+	
+	update_interaction()
 
 func update_interaction():
-	pass #TODO
+	for child in options_container.get_children():
+		child.queue_free()
+	
+	for option in current_part.options:
+		var btn = Button.new()
+		btn.set_script(button_script)
+		btn.action = option
+		btn.text = option.text
+		btn.connect("press", self, "option_selected")
+		options_container.add_child(btn)
+	
+	speech_container.text = current_part.speech
 
 func option_selected(action):
-	pass #TODO: decode the action parameter
+	for a in action.action:
+		if a.type == "exit":
+			gstate.paused = false
+			$npc_interaction.hide()
+			interacting = false
+		elif a.type == "label":
+			current_part = interaction.get(a.label)
+			if current_part == null:
+				printerr("INTERACTION: Could not find an interaction segment with the label " + a.label)
+				gstate.paused = false
+				interacting = false
+				$npc_interaction.hide()
+			update_interaction()
+		else:
+			printerr("INTERACTION: Unknown type: " + a.type)
+			gstate.paused = false
+			interacting = false
+			$npc_interaction.hide()
 
 # Stuff that needs to be checked every frame
 
 func _process(_delta):
 	#Interaction label
 	if pstate.interacting_with:
+		$interact_label.text = pstate.interact_label_text
 		$interact_label.show()
 	else:
 		$interact_label.hide()

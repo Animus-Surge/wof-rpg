@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://scripts/global/maproot.gd" type="Script" id=1]
 [ext_resource path="res://objects/entity/interactable_object.tscn" type="PackedScene" id=2]
@@ -6,6 +6,8 @@
 [ext_resource path="res://scripts/ui/ui_manager.gd" type="Script" id=4]
 [ext_resource path="res://scripts/interaction/item_obj.gd" type="Script" id=5]
 [ext_resource path="res://scripts/interaction/container_obj.gd" type="Script" id=6]
+[ext_resource path="res://scripts/ui/interaction_button.gd" type="Script" id=7]
+[ext_resource path="res://scripts/interaction/npc_obj.gd" type="Script" id=8]
 
 [sub_resource type="TileSet" id=1]
 0/name = "Temp Tile"
@@ -46,6 +48,10 @@ items = [ {
 "slot": 2
 } ]
 
+[sub_resource type="Resource" id=6]
+script = ExtResource( 8 )
+id = "test_npc"
+
 [sub_resource type="StyleBoxFlat" id=5]
 bg_color = Color( 0, 0, 0, 0.509804 )
 
@@ -77,6 +83,11 @@ data = SubResource( 3 )
 position = Vector2( 7.92091, 126.509 )
 type = "Container"
 data = SubResource( 4 )
+
+[node name="object4" parent="YSort" instance=ExtResource( 2 )]
+position = Vector2( 164, 38 )
+type = "NPC"
+data = SubResource( 6 )
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 0
@@ -272,6 +283,7 @@ size_flags_vertical = 3
 margin_right = 210.0
 margin_bottom = 20.0
 text = "Option 1"
+script = ExtResource( 7 )
 
 [node name="textscroll" type="ScrollContainer" parent="UILayer/ui_root/npc_interaction"]
 anchor_right = 0.73
