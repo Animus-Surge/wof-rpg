@@ -3,6 +3,10 @@ extends "res://scripts/global/scene_root.gd"
 var player_object = load("res://objects/entity/player.tscn")
 var interactable_object = load("res://objects/entity/interactable_object.tscn")
 
+func get_world_data():
+	if gstate.mplayer: return {}
+	#TODO
+
 puppetsync func spawn_player(id, pos, _data):
 	if !gstate.mplayer:
 		var player = player_object.instance()
@@ -41,5 +45,5 @@ puppetsync func spawn_object(data):
 		_:
 			print("MAPSPAWN: Error while spawning object: Invalid type " + str(obj.type))
 			return
-	
+	#TODO: finish this function
 	$YSort.add_child(obj)

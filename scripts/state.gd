@@ -97,6 +97,12 @@ func _ready():
 	hide_loadingscreen()
 	auto_hide_loadscreen = true
 
+#Notifications
+
+func _notification(what):
+	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
+		get_tree().quit() #TODO: saving
+
 #Menu flags
 var emsg_en = false
 var emsg

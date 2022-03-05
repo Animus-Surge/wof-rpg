@@ -126,6 +126,8 @@ func chat_message(message):
 
 #Inventory System
 
+#TODO: hover modals
+
 var container_owner
 
 #Signal callbacks
