@@ -33,5 +33,12 @@
         }
       ]
     }
+  },
+  {
+    "type":"NPC",
+    "location":{"x":164,"y":38},
+    "data":{
+      "id":"test_npc"
+    }
   }
 ]

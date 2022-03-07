@@ -9,10 +9,30 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "KinematicBody2D",
+"class": "BasicEnemy",
+"language": "GDScript",
+"path": "res://scripts/entity/enemy.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "BasicEntity",
+"language": "GDScript",
+"path": "res://scripts/entity/entity.gd"
+}, {
 "base": "Resource",
 "class": "ContainerObject",
 "language": "GDScript",
 "path": "res://scripts/interaction/container_obj.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "DamageableEntity",
+"language": "GDScript",
+"path": "res://scripts/entity/damageable.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "InteractableEntity",
+"language": "GDScript",
+"path": "res://scripts/interaction/interactable.gd"
 }, {
 "base": "Resource",
 "class": "InteractionObject",
@@ -28,12 +48,22 @@ _global_script_classes=[ {
 "class": "NPCObject",
 "language": "GDScript",
 "path": "res://scripts/interaction/npc_obj.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Player",
+"language": "GDScript",
+"path": "res://scripts/player/player.gd"
 } ]
 _global_script_class_icons={
+"BasicEnemy": "",
+"BasicEntity": "",
 "ContainerObject": "",
+"DamageableEntity": "",
+"InteractableEntity": "",
 "InteractionObject": "",
 "ItemObject": "",
-"NPCObject": ""
+"NPCObject": "",
+"Player": ""
 }
 
 [application]

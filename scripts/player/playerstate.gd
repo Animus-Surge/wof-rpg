@@ -8,6 +8,8 @@ extends Node
 signal add_item(item, amount)
 signal container_show(data)
 signal interact(data)
+signal show_hover_data(data)
+signal hide_hover_data()
 
 #Player display stuff
 var tribe_id # Contains the ID for the tribe (i.e. "iw") Hybrids look like this: "iw-sw" and custom tribes (addons) look like this: "cs:<tribe_id>"
@@ -42,7 +44,7 @@ func interact():
 	if interacting_with.data == null: 
 		push_warning("PSTATE: Warning: Can't interact with an interactable with null data field")
 		return
-	match interacting_with.type:
+	match interacting_with.itype:
 		"Item":
 			var i = {}
 			for item in gstate.item_data:

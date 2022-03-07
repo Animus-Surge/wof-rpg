@@ -1,13 +1,13 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://scripts/global/maproot.gd" type="Script" id=1]
-[ext_resource path="res://objects/entity/interactable_object.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scripts/interaction/interactable.gd" type="Script" id=2]
 [ext_resource path="res://assets/tiles/tile-temp.png" type="Texture" id=3]
 [ext_resource path="res://scripts/ui/ui_manager.gd" type="Script" id=4]
 [ext_resource path="res://scripts/interaction/item_obj.gd" type="Script" id=5]
-[ext_resource path="res://scripts/interaction/container_obj.gd" type="Script" id=6]
+[ext_resource path="res://scripts/entity/damageable.gd" type="Script" id=6]
 [ext_resource path="res://scripts/ui/interaction_button.gd" type="Script" id=7]
-[ext_resource path="res://scripts/interaction/npc_obj.gd" type="Script" id=8]
+[ext_resource path="res://scripts/entity/enemy.gd" type="Script" id=8]
 
 [sub_resource type="TileSet" id=1]
 0/name = "Temp Tile"
@@ -25,39 +25,15 @@
 0/shapes = [  ]
 0/z_index = 0
 
-[sub_resource type="Resource" id=2]
+[sub_resource type="Resource" id=9]
 script = ExtResource( 5 )
-item_id = "temp_1"
+item_id = "temp_3"
 amount = 1
-
-[sub_resource type="Resource" id=3]
-script = ExtResource( 5 )
-item_id = "temp_2"
-amount = 1
-
-[sub_resource type="Resource" id=4]
-script = ExtResource( 6 )
-slots = 10
-items = [ {
-"amount": 10,
-"item": "temp_1",
-"slot": 0
-}, {
-"amount": 10,
-"item": "temp_3",
-"slot": 2
-} ]
-
-[sub_resource type="Resource" id=5]
-script = ExtResource( 8 )
-id = "test_npc"
-
-[sub_resource type="CircleShape2D" id=8]
-
-[sub_resource type="StyleBoxFlat" id=6]
-bg_color = Color( 0, 0, 0, 0.509804 )
 
 [sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0, 0, 0, 0.509804 )
+
+[sub_resource type="StyleBoxFlat" id=8]
 bg_color = Color( 0, 0, 0, 0.392157 )
 
 [node name="map" type="Node2D"]
@@ -74,31 +50,32 @@ tile_data = PoolIntArray( -1376274, 0, 0, -1376273, 0, 0, -1376272, 0, 0, -13762
 
 [node name="YSort" type="YSort" parent="."]
 
-[node name="object" parent="YSort" instance=ExtResource( 2 )]
-position = Vector2( -149.063, 69.9485 )
-type = "Item"
-data = SubResource( 2 )
+[node name="InteractableEntity" type="KinematicBody2D" parent="YSort"]
+position = Vector2( 99, 34 )
+script = ExtResource( 2 )
+collideable = false
+itype = "Item"
+display_name = "Test 3"
+data = SubResource( 9 )
 
-[node name="object3" parent="YSort" instance=ExtResource( 2 )]
-position = Vector2( -114.236, -79.8075 )
-type = "Item"
-data = SubResource( 3 )
+[node name="Target Dummy" type="KinematicBody2D" parent="YSort"]
+position = Vector2( 2, 99 )
+script = ExtResource( 6 )
+max_hp = -1
 
-[node name="object2" parent="YSort" instance=ExtResource( 2 )]
-position = Vector2( 7.92091, 126.509 )
-type = "Container"
-data = SubResource( 4 )
+[node name="BasicEnemy" type="KinematicBody2D" parent="YSort"]
+position = Vector2( -112, -63 )
+script = ExtResource( 8 )
 
-[node name="object4" parent="YSort" instance=ExtResource( 2 )]
-position = Vector2( 164, 38 )
-type = "NPC"
-data = SubResource( 5 )
+[node name="BasicEnemy2" type="KinematicBody2D" parent="YSort"]
+position = Vector2( 68, -62 )
+script = ExtResource( 8 )
+max_hp = 20
 
-[node name="enemy" type="KinematicBody2D" parent="YSort"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="YSort/enemy"]
-position = Vector2( 340.68, -80.3326 )
-shape = SubResource( 8 )
+[node name="BasicEnemy3" type="KinematicBody2D" parent="YSort"]
+position = Vector2( -105, 23 )
+script = ExtResource( 8 )
+max_hp = 50
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 0
@@ -160,7 +137,7 @@ bbcode_enabled = true
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 6 )
+custom_styles/panel = SubResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -202,7 +179,7 @@ text = "quit"
 visible = false
 anchor_right = 1.0
 margin_bottom = 43.0
-custom_styles/normal = SubResource( 7 )
+custom_styles/normal = SubResource( 8 )
 text = "Press F to interact with object"
 align = 1
 valign = 1

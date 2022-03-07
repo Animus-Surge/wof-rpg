@@ -19,6 +19,9 @@ func _ready():
 # warning-ignore:return_value_discarded
 	pstate.connect("interact", self, "_npc_interact")
 	
+	pstate.connect("show_hover_data", self, "_hover_data_show")
+	pstate.connect("hide_hover_data", self, "_hover_data_hide")
+	
 	#Hide all UI elements that are hidden by default
 	$pausemenu.hide()
 	$player_inventory.hide()
@@ -248,6 +251,8 @@ func option_selected(action):
 			gstate.paused = false
 			interacting = false
 			$npc_interaction.hide()
+
+# Hover data
 
 # Stuff that needs to be checked every frame
 

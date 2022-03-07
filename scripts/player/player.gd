@@ -1,12 +1,15 @@
-extends KinematicBody2D
+extends "res://scripts/entity/damageable.gd"
 
-const SPEED = 100
+class_name Player
+
+export(int) var speed = 100
 var vel  = Vector2()
 
 puppet var pvel = Vector2()
 puppet var ppos = Vector2()
 
 func _ready():
+	type = "player"
 	if !gstate.mplayer:
 		$Camera2D.current = true
 		$Label.text = ""
@@ -20,13 +23,26 @@ func _ready():
 	
 	ppos = position
 
+var down
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.pressed and event.button_index == BUTTON_LEFT and !down: #Combat system
+			var obj = $RayCast2D.get_collider()
+			down = true
+			if obj == null: return
+			if obj.type == "damageable":
+				obj.hurt(10)
+		elif !event.pressed and event.button_index == BUTTON_LEFT and down:
+			down = false
+
 func _process(_delta):
 	if (!gstate.mplayer or is_network_master()) and !gstate.paused:
 		var mdir = Vector2()
 		mdir.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 		mdir.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 		
-		vel = mdir.normalized() * SPEED
+		vel = mdir.normalized() * speed
 		
 		if gstate.mplayer:
 			rset_unreliable("pvel", vel)
