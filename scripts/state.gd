@@ -313,9 +313,9 @@ func load_save(save_name, save_path = "user://saves/"):
 	
 	current_save = save_name
 	
-	var full_path = save_path + save_name + "/save.json" #Converting to user dir format
+	var full_path = save_path + save_name + "/" #Converting to user dir format
 	
-	var data = load_data_file(full_path)
+	var data = load_data_file(full_path + "save.json")
 	
 	yield(self, "done")
 	

@@ -222,6 +222,23 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="infopanel" type="Panel" parent="UILayer/ui_root"]
+visible = false
+margin_top = -1.0
+margin_right = 220.0
+margin_bottom = 109.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="hpbar" type="ProgressBar" parent="UILayer/ui_root/infopanel"]
+anchor_right = 1.0
+margin_bottom = 14.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="player_inventory" type="Panel" parent="UILayer/ui_root"]
 visible = false
 anchor_left = 0.0732422
@@ -329,15 +346,6 @@ anchor_top = 0.903
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 0.199951
-
-[node name="infopanel" type="Panel" parent="UILayer/ui_root"]
-margin_right = 294.0
-margin_bottom = 164.0
-
-[node name="hpbar" type="ProgressBar" parent="UILayer/ui_root/infopanel"]
-anchor_right = 1.0
-margin_bottom = 14.0
-percent_visible = false
 
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/resume" to="UILayer/ui_root" method="unpause"]
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/settings" to="UILayer/ui_root" method="settings"]

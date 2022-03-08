@@ -10,3 +10,9 @@ func _ready():
 
 func dead():
 	queue_free()
+
+func _mouse_entered():
+	pass # TODO
+
+func _mouse_exited():
+	pass # TODO
