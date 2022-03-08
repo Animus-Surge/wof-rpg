@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://scripts/global/maproot.gd" type="Script" id=1]
 [ext_resource path="res://scripts/interaction/interactable.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://scripts/entity/damageable.gd" type="Script" id=6]
 [ext_resource path="res://scripts/ui/interaction_button.gd" type="Script" id=7]
 [ext_resource path="res://scripts/entity/enemy.gd" type="Script" id=8]
+[ext_resource path="res://scripts/interaction/container_obj.gd" type="Script" id=9]
 
 [sub_resource type="TileSet" id=1]
 0/name = "Temp Tile"
@@ -25,15 +26,30 @@
 0/shapes = [  ]
 0/z_index = 0
 
-[sub_resource type="Resource" id=9]
+[sub_resource type="Resource" id=2]
 script = ExtResource( 5 )
 item_id = "temp_3"
 amount = 1
 
-[sub_resource type="StyleBoxFlat" id=7]
+[sub_resource type="Resource" id=3]
+script = ExtResource( 9 )
+slots = 10
+items = [  ]
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 5 )
+item_id = "temp_1"
+amount = 1
+
+[sub_resource type="Resource" id=5]
+script = ExtResource( 5 )
+item_id = "temp_2"
+amount = 1
+
+[sub_resource type="StyleBoxFlat" id=6]
 bg_color = Color( 0, 0, 0, 0.509804 )
 
-[sub_resource type="StyleBoxFlat" id=8]
+[sub_resource type="StyleBoxFlat" id=7]
 bg_color = Color( 0, 0, 0, 0.392157 )
 
 [node name="map" type="Node2D"]
@@ -56,7 +72,7 @@ script = ExtResource( 2 )
 collideable = false
 itype = "Item"
 display_name = "Test 3"
-data = SubResource( 9 )
+data = SubResource( 2 )
 
 [node name="Target Dummy" type="KinematicBody2D" parent="YSort"]
 position = Vector2( 2, 99 )
@@ -76,6 +92,24 @@ max_hp = 20
 position = Vector2( -105, 23 )
 script = ExtResource( 8 )
 max_hp = 50
+
+[node name="InteractableEntity2" type="KinematicBody2D" parent="YSort"]
+position = Vector2( 161, -55 )
+script = ExtResource( 2 )
+itype = "Container"
+data = SubResource( 3 )
+
+[node name="InteractableEntity3" type="KinematicBody2D" parent="YSort"]
+position = Vector2( 112, -14 )
+script = ExtResource( 2 )
+itype = "Item"
+data = SubResource( 4 )
+
+[node name="InteractableEntity4" type="KinematicBody2D" parent="YSort"]
+position = Vector2( 179, 69 )
+script = ExtResource( 2 )
+itype = "Item"
+data = SubResource( 5 )
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 0
@@ -137,7 +171,7 @@ bbcode_enabled = true
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 7 )
+custom_styles/panel = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -179,7 +213,7 @@ text = "quit"
 visible = false
 anchor_right = 1.0
 margin_bottom = 43.0
-custom_styles/normal = SubResource( 8 )
+custom_styles/normal = SubResource( 7 )
 text = "Press F to interact with object"
 align = 1
 valign = 1
