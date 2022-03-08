@@ -94,7 +94,7 @@ script = ExtResource( 8 )
 max_hp = 50
 
 [node name="InteractableEntity2" type="KinematicBody2D" parent="YSort"]
-position = Vector2( 161, -55 )
+position = Vector2( -30, 96 )
 script = ExtResource( 2 )
 itype = "Container"
 data = SubResource( 3 )
@@ -329,6 +329,15 @@ anchor_top = 0.903
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 0.199951
+
+[node name="infopanel" type="Panel" parent="UILayer/ui_root"]
+margin_right = 294.0
+margin_bottom = 164.0
+
+[node name="hpbar" type="ProgressBar" parent="UILayer/ui_root/infopanel"]
+anchor_right = 1.0
+margin_bottom = 14.0
+percent_visible = false
 
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/resume" to="UILayer/ui_root" method="unpause"]
 [connection signal="pressed" from="UILayer/ui_root/pausemenu/settings" to="UILayer/ui_root" method="settings"]
