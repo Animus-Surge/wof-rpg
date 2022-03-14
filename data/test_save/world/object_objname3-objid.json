@@ -1,0 +1,11 @@
+{
+  "type":"Interactable",
+  "display_name":"Test NPC",
+  "collideable":false,
+  "position":{"x":100,"y":30},
+  "texture_path":"res://assets/npc_temp.png",
+  "itype":"NPC",
+  "data":{
+    "id":"test_npc"
+  }
+}

@@ -46,6 +46,8 @@ func _ready():
 
 func _area_entered(body):
 	if body.type != "player" or (gstate.mplayer && !body.is_network_master()): return
+	if itype == "Container":
+		print(data.items)
 	entered_body = body.name
 	if !pstate.interacting_with:
 		pstate.interacting_with = self

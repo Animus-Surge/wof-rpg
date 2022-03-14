@@ -8,8 +8,12 @@ extends Node
 signal add_item(item, amount)
 signal container_show(data)
 signal interact(data)
+# warning-ignore:unused_signal
 signal show_hover_data(data)
+# warning-ignore:unused_signal
 signal hide_hover_data()
+# warning-ignore:unused_signal
+signal init_inventory()
 
 #Player display stuff
 var tribe_id # Contains the ID for the tribe (i.e. "iw") Hybrids look like this: "iw-sw" and custom tribes (addons) look like this: "cs:<tribe_id>"
@@ -27,9 +31,6 @@ var inventory = []
 var inv_size = 25
 
 func _ready():
-	for _i in range(inv_size):
-		inventory.append({})
-	
 	interacting_with = null
 
 #Skill tree stuff
@@ -64,3 +65,5 @@ func interact():
 				printerr("PSTATE: No interaction exists with ID: " + interacting_with.data.id)
 		_:
 			pass #TODO: add the rest of them
+
+#signal passthroughs

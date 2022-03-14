@@ -19,8 +19,13 @@ func _ready():
 # warning-ignore:return_value_discarded
 	pstate.connect("interact", self, "_npc_interact")
 	
+# warning-ignore:return_value_discarded
 	pstate.connect("show_hover_data", self, "_hover_data_show")
+# warning-ignore:return_value_discarded
 	pstate.connect("hide_hover_data", self, "_hover_data_hide")
+	
+# warning-ignore:return_value_discarded
+	pstate.connect("init_inventory", self, "_init_inventory")
 	
 	#Hide all UI elements that are hidden by default
 	$pausemenu.hide()
@@ -28,13 +33,6 @@ func _ready():
 	$container_inventory.hide()
 	$interact_label.hide()
 	$npc_interaction.hide()
-	
-	#Initial inventory initialization (After everything is loaded
-	for item in pstate.inventory: # item data contains item and amount
-		var slot = inv_slot.instance()
-		if !item.empty():
-			slot.set_item(item.item, item.amount)
-		$player_inventory/scroll/grid.add_child(slot)
 	
 	#Multiplayer only stuff
 	if gstate.mplayer:
@@ -133,6 +131,22 @@ func chat_message(message):
 
 var container_owner
 
+#Gets called once the cdata.json file is loaded and the playerstate inventory fields are set
+func _init_inventory():
+	for _s in range(pstate.inv_size):
+		var slot = inv_slot.instance()
+		$player_inventory/scroll/grid.add_child(slot)
+	
+	for item in pstate.inventory:
+		var slot = $player_inventory/scroll/grid.get_child(item.slot)
+		
+		for i in gstate.item_data:
+			if i.id == item.item:
+				slot.set_item(i, item.amount)
+				print("DBG: Setting slot " + str(item.slot) + " to item ID: " + i.id)
+				break
+			printerr("DBG: ERROR: No item with ID: " + item.item)
+
 #Signal callbacks
 func show_inventory():
 	$player_inventory.show()
@@ -150,9 +164,11 @@ func show_container(container_data):
 		for i in gstate.item_data:
 			if i.id == item.item:
 				slot.set_item(i, item.amount)
+				break
 	
 	$container_inventory.show()
 	$player_inventory.show()
+	interacting = true
 
 func hide_container(container_data):
 	#Update the container data's contents
@@ -267,16 +283,10 @@ func _process(_delta):
 	if !$container_inventory.visible and !$npc_interaction.visible: #TODO: check the other interaction UI systems
 		interacting = false
 	
-	#Inventory management
-	var index = 0
 # warning-ignore:shadowed_variable
+	pstate.inventory.clear()
+	var slot = 0
 	for i_slot in $player_inventory/scroll/grid.get_children():
-		if i_slot.get("item").empty():
-			pstate.inventory[index] = {}
-			index += 1
-			continue
-		elif !pstate.inventory[index].empty() and i_slot.get("item") == pstate.inventory[index].item and i_slot.get("amt") == pstate.inventory[index].amount:
-			index += 1
-			continue
-		pstate.inventory[index] = {"item":i_slot.get("item"), "amount":i_slot.get("amt")}
-		index += 1
+		if !i_slot.item.empty():
+			pstate.inventory.append({"slot":slot, "item":i_slot.item.id, "amount":i_slot.amt})
+		slot += 1

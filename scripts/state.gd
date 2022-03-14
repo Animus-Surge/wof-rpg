@@ -101,6 +101,8 @@ func _ready():
 
 func _notification(what):
 	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
+		if current_scene == "map" and !mplayer:
+			get_node("/root/map").save(current_save)
 		get_tree().quit() #TODO: saving
 
 #Menu flags
@@ -110,6 +112,8 @@ var emsg
 var auth = false
 var auth_token
 var username
+
+#System notifications
 
 ######################
 # Multiplayer system #
@@ -309,27 +313,66 @@ puppet func recieve_packet_c(data):
 
 func load_save(save_name, save_path = "user://saves/"):
 	auto_hide_loadscreen = false
-	load_scene("map")
+	show_loadingscreen()
 	
 	current_save = save_name
 	
-	var full_path = save_path + save_name + "/" #Converting to user dir format
+	var full_path = save_path + save_name + "/"
+	var world_data_path = full_path + "world/" #contains world objects (TODO: add more functionality)
+	var _data_path = full_path + "data/" #contains things like npc data and reputation in cities
 	
 	var data = load_data_file(full_path + "save.json")
+	var cdata = load_data_file(full_path + "cdata.json")
 	
-	yield(self, "done")
-	
-	if data.empty():
-		printerr("ERROR: Could not find any save data... aborting")
-		load_scene("menus")
+	#Make sure the save exists
+	if data.empty() or cdata.empty():
+		printerr("SAVESYS: ERROR: Could not find some required save data... aborting (TODO: create new save with defaults)")
+		hide_loadingscreen()
 		auto_hide_loadscreen = true
 		return
 	
-	get_node("/root/map").spawn_player("player", Vector2(data.position.x, data.position.y), {})
+	#Make sure world data exists
+	var world_data_dir = Directory.new()
+	var err = world_data_dir.open(world_data_path)
+	if err != OK:
+		printerr("SAVESYS: ERROR: World data not found! (TODO: implement default world layout): Error code " + str(err))
+		hide_loadingscreen()
+		auto_hide_loadscreen = true
+		return
 	
+	load_scene("map")
+	yield(self, "done")
+	
+	#Make sure the player won't die while loading the scene
+	paused = true
+	
+	#Spawn the player and initialize the playerstate
+	get_node("/root/map").spawn_player("player", Vector2(cdata.position.x, cdata.position.y), {})
+	pstate.inventory = cdata.inventory
+	pstate.inv_size = cdata.inventory_slots
+	
+	pstate.emit_signal("init_inventory")
+	
+	#Spawn all objects on the map
+	world_data_dir.list_dir_begin(true, true) #Skip navigational paths (. ..) and any hidden files (why would there be hidden files?)
+	var objfile = world_data_dir.get_next()
+	while objfile != "":
+		if world_data_dir.current_is_dir(): #Directory?
+			pass #Check if any important files are in this directory
+		else: #Not a directory, must be a file.
+			if objfile.begins_with("object_"): #Is it an object file?
+				var objdata = load_data_file(world_data_path + objfile)
+				if !objdata.empty(): #So no errors occur, because that means something wrong happened when loading the file, so just skip it. Check logs for more info
+					get_node("/root/map").spawn_object(objdata)
+			#TODO: other file types (waypoints, spawn locations, etc.)
+		objfile = world_data_dir.get_next()
+	
+	#Load the save's interaction data (TODO)
 	interaction_data = load_data_file("res://data/npc_main.json")
 	
+	#Finally done loading, so show the map to the player and unpause the game!
 	auto_hide_loadscreen = true
+	paused = false
 	get_node("/root/loading_screen").hide_ls()
 
 #################
@@ -340,14 +383,19 @@ func load_data_file(path) -> Dictionary:
 	var file = File.new()
 	var err = file.open(path, File.READ)
 	if err != OK:
-		printerr("SAVESYS: Error: Failed to load data file " + path)
+		printerr("SAVESYS: Error: Failed to load data file " + path + ": Error code " + str(err))
 		return {} 
 	print("SAVESYS: Loaded data file from path: " + path)
 	return JSON.parse(file.get_as_text()).result
 
 func save_game_file(_file_name, _data, is_global = false): #Saves to game save directory unless global file
-	var directory = "user://" + ("saves/" + current_save if !is_global else "")
-	print("SAVESYS: Saving data file: " + directory)
+	var directory = "user://" + ("saves/" + current_save + "/" if !is_global else "")
+	print("SAVESYS: Saving data file: " + directory + _file_name)
+	
+	var file = File.new()
+	var err = file.open(directory, File.WRITE)
+	if err != OK:
+		pass
 	#TODO
 
 #################
@@ -419,3 +467,6 @@ func set_scene(data):
 func hide_loadingscreen():
 	if !loader:
 		get_node("/root/loading_screen").hide_ls()
+
+func show_loadingscreen():
+	get_node("/root/loading_screen").show_ls()

@@ -1,0 +1,23 @@
+{
+  "type":"Interactable",
+  "display_name":"Test Interactable",
+  "collideable":false,
+  "position":{"x":50,"y":30},
+  "texture_path":"res://assets/container_temp.png",
+  "itype":"Container",
+  "data":{
+    "slots":10,
+    "items":[
+      {
+        "slot":0,
+        "item":"temp_1",
+        "amount":5
+      },
+      {
+        "slot":4,
+        "item":"temp_3",
+        "amount":85
+      }
+    ]
+  }
+}

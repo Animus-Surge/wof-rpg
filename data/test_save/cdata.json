@@ -1,7 +1,13 @@
 {
-  "position":{"x":10,"y":10},
+  "position":{"x":0,"y":-100},
   "character":"unimpl",
-  "inventory":[],
+  "inventory":[
+    {
+      "slot":0,
+      "item":"temp_1",
+      "amount":4
+    }
+  ],
   "inventory_slots":25,
   "inventory_armor":{ 
     "slot_head":"unimpl",
