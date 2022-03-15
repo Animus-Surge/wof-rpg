@@ -39,14 +39,39 @@ var current_scene
 func _ready():
 	set_process(false)
 	
-	#fb.fb_init()
+	#Get info about the user's system, for debug and system purposes
 	
+	print("SYS: Getting system information...")
+	print("\tVideo Driver: " + ("GLES2" if OS.get_current_video_driver() == 0 else "GLES3"))
+	print("\tScreens: " + str(OS.get_screen_count()))
+	print("\tPrimary screen size: " + str(OS.get_screen_size()))
+	print("\tPrimary screen DPI: " + str(OS.get_screen_dpi()))
+	
+	#Create required directories, if they do not exist. This will ensure that
+	#no errors occur because of invalid directory structure 
+	var directory = Directory.new()
+	directory.open("user://")
+	
+	#Saves dir
+	if !directory.dir_exists("saves"):
+		directory.make_dir("saves")
+	#Characters dir
+	if !directory.dir_exists("characters"):
+		directory.make_dir("characters")
+	
+	#fb.fb_init() #TODO: firebase integration
+	
+	current_save = "test"
+	
+	update_game_file("test.json", {"test":"Hewwo?", "ping":"Pong!"})
+	
+	#Debug system
 	if !debug:
 		current_scene = "loading_screen"
 		auto_hide_loadscreen = false
 		load_scene("menus")
 	
-	#Load data
+	#Load game data
 	var file = File.new()
 	var err = file.open("res://data/item_dict.json", File.READ)
 	if err != OK:
@@ -63,10 +88,10 @@ func _ready():
 	get_tree().connect("network_peer_disconnected", self, "player_disconnected")
 	
 	#Check dedicated server file in exe dir
-	var directory = OS.get_executable_path().get_base_dir()
+	var exeloc = OS.get_executable_path().get_base_dir()
 	print("SERVER: Checking for server.json...")
 	var f = File.new()
-	var exists = f.open(directory + "/server.json", File.READ)
+	var exists = f.open(exeloc + "/server.json", File.READ)
 	if exists == OK:
 		var sdata = JSON.parse(f.get_as_text()).result
 		if sdata.has_all(["port", "name", "description", "max_players"]):
@@ -80,7 +105,7 @@ func _ready():
 			get_tree().quit()
 		return
 	else:
-		print("SERVER: File not found or inaccessible. Starting client instance")
+		print("SERVER: File not found or inaccessible. Starting client instance. (Error code:" + str(exists) + ")")
 	
 	#Client signals
 # warning-ignore:return_value_discarded
@@ -379,6 +404,23 @@ func load_save(save_name, save_path = "user://saves/"):
 # Loader System #
 #################
 
+func create_save(save_name):
+	var directory = Directory.new()
+	directory.open("user://saves")
+	
+	if directory.dir_exists(save_name):
+		print("SAVESYS: Save already exists with the name " + save_name)
+		return
+	
+	directory.make_dir(save_name)
+	directory.change_dir(save_name)
+	directory.make_dir("world")
+	directory.make_dir("data")
+	
+	current_save = save_name
+	
+	save_game_file("save.json", {"save_name":save_name})
+
 func load_data_file(path) -> Dictionary:
 	var file = File.new()
 	var err = file.open(path, File.READ)
@@ -389,14 +431,42 @@ func load_data_file(path) -> Dictionary:
 	return JSON.parse(file.get_as_text()).result
 
 func save_game_file(_file_name, _data, is_global = false): #Saves to game save directory unless global file
-	var directory = "user://" + ("saves/" + current_save + "/" if !is_global else "")
-	print("SAVESYS: Saving data file: " + directory + _file_name)
+	var directory = "user://" + ("saves/" + current_save + "/" if !is_global else "") + _file_name
+	print("SAVESYS: Saving data file: " + directory)
 	
 	var file = File.new()
 	var err = file.open(directory, File.WRITE)
 	if err != OK:
-		pass
-	#TODO
+		printerr("SAVESYS: Error: Failed to open data file " + directory + ": Error code " + str(err))
+		return
+	
+	file.store_string(JSON.print(_data))
+	file.close()
+	
+	print("SAVESYS: Created and saved data file " + directory)
+
+#Only needs the required fields to be updated.
+func update_game_file(file_name, data: Dictionary):
+	var dir = "user://saves/" + current_save + "/" + file_name
+	var file = File.new()
+	var err = file.open(dir, File.READ)
+	if err != OK:
+		printerr("SAVESYS: Error: Failed to open data file " + dir + ": Error code: " + str(err))
+		return
+	
+	var file_data = JSON.parse(file.get_as_text()).result
+	for key in data.keys():
+		if file_data.has(key):
+			file_data[key] = data[key]
+		else:
+			print("SAVESYS: Warning: Key " + str(key) + " does not exist in data file " + dir)
+	
+	
+	file.open(dir, File.WRITE)
+	file.store_string(JSON.print(file_data))
+	file.close()
+	
+	print("SAVESYS: Data file " + dir + " updated")
 
 #################
 # Scene Manager #
@@ -470,3 +540,8 @@ func hide_loadingscreen():
 
 func show_loadingscreen():
 	get_node("/root/loading_screen").show_ls()
+
+#Helper funcs
+
+func scancode_to_string(code):
+	return OS.get_scancode_string(code)

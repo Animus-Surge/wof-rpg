@@ -1,4 +1,6 @@
 {
   "save_name":"test save",
-  "position":{"x":0, "y":0}
+  "online":false,
+  "max_players":10,
+  "last_played":"UTC-5 2022-3-15 10:34"
 }

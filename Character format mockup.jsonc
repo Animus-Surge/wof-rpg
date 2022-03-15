@@ -1,0 +1,62 @@
+//Character format mockup
+
+/*
+
+Builtin tribe IDs:
+
+base:hivewing
+base:icewing
+base:leafwing
+base:mudwing
+base:nightwing
+base:rainwing
+base:sandwing
+base:seawing
+base:silkwing
+base:skywing
+
+builtin:nopart - Used when player selects to not have a particular part on their character (applies to tail deco, scale deco, spine, and horns)
+builtin:debug - Debug tribe
+
+*/
+
+{
+  "name":"Character Name",
+  "guid":"alwieufhawliufhalwiuhfaliufhnalsbearfvaleiruf",
+  "tribe_ids":["exp:tribe"],
+  "level":0,
+  "colors":{
+    "scale_main":{"r":0,"g":0,"b":0},
+    "scale_aux":{"r":0,"g":0,"b":0},
+    "wing_main":{"r":0,"g":0,"b":0},
+    "wing_aux":{"r":0,"g":0,"b":0},
+    "eye":{"r":0,"g":0,"b":0},
+    "pupil":{"r":0,"g":0,"b":0},
+    "horns":{"r":0,"g":0,"b":0},
+    "spine":{"r":0,"g":0,"b":0},
+    "scale_deco_1":{"r":0,"g":0,"b":0},
+    "scale_deco_2":{"r":0,"g":0,"b":0},
+    "tail_deco":{"r":0,"g":0,"b":0},
+    "frills":{"r":0,"g":0,"b":0}
+  },
+  "part_ids":{
+    "head":"exp:tribe",
+    "neck":"exp:tribe",
+    "torso":"exp:tribe",
+    "legs":"exp:tribe",
+    "tail":"exp:tribe",
+    "scale_deco_1":"exp:tribe",
+    "scale_deco_2":"exp:tribe",
+    "tail_deco":"exp:tribe",
+    "frills":"exp:tribe",
+    "horns":"exp:tribe",
+    "wings":"exp:tribe"
+  },
+  "modifiers":{
+    "speed":0,
+    "strength":0,
+    "mana":0,
+    "hp":0,
+    "toughness":0
+  }
+}

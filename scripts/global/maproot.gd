@@ -2,13 +2,8 @@ extends "res://scripts/global/scene_root.gd"
 
 var player_object = load("res://objects/entity/player.tscn")
 
-
-
-func get_world_data():
-	if gstate.mplayer: return {}
-	#TODO
-
 puppetsync func spawn_player(id, pos, _data):
+	#TODO: loading the player's position from the global data file
 	if !gstate.mplayer:
 		var player = player_object.instance()
 		player.position = pos
@@ -27,6 +22,7 @@ puppetsync func spawn_player(id, pos, _data):
 	$YSort.add_child(player)
 
 puppetsync func despawn_player(id):
+	#TODO: saving the player's position in the global data file
 	$YSort.get_node(str(id)).queue_free()
 
 puppetsync func spawn_object(data):
