@@ -6,6 +6,8 @@ class_name DamageableEntity
 # - hp regen
 # - modifier effects
 
+onready var tx = load("res://assets/textures/entity/enemy-temp.png")
+
 #Signals
 signal dead() #Used by subclasses
 
@@ -23,6 +25,7 @@ var dmg_label_timer
 func _ready():
 	type = "damageable"
 	hp = max_hp #TODO: save system handling
+	texture = tx
 	
 	#Damage label
 	var damage_label_timer = Timer.new()

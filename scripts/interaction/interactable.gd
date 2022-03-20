@@ -7,8 +7,8 @@ export(String) var display_name
 export(Resource) var data # Contains information like speech and such, exported for debug purposes
 
 #FOLLOWING TWO LINES ARE TEMPORARY
-onready var container_img = load("res://assets/container_temp.png")
-onready var npc_img = load("res://assets/npc_temp.png")
+onready var container_img = load("res://assets/textures/entity/container_temp.png")
+onready var npc_img = load("res://assets/textures/entity/npc_temp.png")
 
 var entered_body
 

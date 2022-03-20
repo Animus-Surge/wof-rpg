@@ -3,7 +3,7 @@
   "display_name":"Basic Enemy",
   "collideable":true,
   "position":{"x":0,"y":0},
-  "texture_path":"",
+  "texture_path":"res://assets/textures/entity/enemy-temp.png",
   "max_hp":100,
   "hp":100,
   "regen":false,

@@ -3,7 +3,7 @@
   "display_name":"Test Interactable",
   "collideable":false,
   "position":{"x":50,"y":30},
-  "texture_path":"res://assets/container_temp.png",
+  "texture_path":"res://assets/textures/entity/container_temp.png",
   "itype":"Container",
   "data":{
     "slots":10,

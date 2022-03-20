@@ -4,6 +4,9 @@ extends Node
 # GLOBAL STATE #
 ################
 
+# Version 1.3.1
+# Author: Surge
+
 #Signals
 # warning-ignore:unused_signal
 signal mp_connected()
@@ -15,6 +18,10 @@ signal mp_client_connect()
 signal mp_fail()
 
 #Global constants
+
+const V_MJR = 1
+const V_MNR = 0
+const V_PAT = 0
 
 #Global data
 var item_data
@@ -60,10 +67,6 @@ func _ready():
 		directory.make_dir("characters")
 	
 	#fb.fb_init() #TODO: firebase integration
-	
-	current_save = "test"
-	
-	update_game_file("test.json", {"test":"Hewwo?", "ping":"Pong!"})
 	
 	#Debug system
 	if !debug:
@@ -138,24 +141,30 @@ var auth = false
 var auth_token
 var username
 
-#System notifications
+###############################
+# In-game Notification System #
+###############################
 
-######################
-# Multiplayer system #
-######################
+# Used for:
+# - In-game errors, like errors loading a file or such
+# - Server invites
+# - Friend requests
+# - Important security warnings (i.e. joining unsecured servers)
+# - Direct messages (maybe, we'll see)
+
+enum ToastType {
+	TYPE_INFO,
+	TYPE_WARNING,
+	TYPE_ERROR
+}
+
+########################
+# Online Functionality #
+########################
 
 # To Do list:
 # - party system
 # - Dedicated server systems
-
-#Player data format
-#"pid"{
-#	"username":string,
-#	"guid":string, < Universal ID when playing online with an account, otherwise no caching will occur
-#	"character-id":string, < load from server database (local file in dedicated server, or load from data in this dictionary and store locally)
-#	"flags":string, < A - admin, M - mod, D - dev, O - other (use server database to manage roles of the player)
-#	"cdata":dictionary < Contains all the data for characters in case no cached version is available
-#}
 
 #Flags
 var deliberate_disconnect = false
@@ -328,13 +337,9 @@ puppet func recieve_packet_c(data):
 		"object_data":
 			pass
 
-#####################################
-# Save Manager/Singleplayer Handler #
-#####################################
-
-#See save_tree.txt for save directory format
-
-#Singleplayer instance ONLY
+#################
+# Loader System #
+#################
 
 func load_save(save_name, save_path = "user://saves/"):
 	auto_hide_loadscreen = false
@@ -399,10 +404,6 @@ func load_save(save_name, save_path = "user://saves/"):
 	auto_hide_loadscreen = true
 	paused = false
 	get_node("/root/loading_screen").hide_ls()
-
-#################
-# Loader System #
-#################
 
 func create_save(save_name):
 	var directory = Directory.new()
