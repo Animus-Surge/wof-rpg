@@ -1,9 +1,11 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scripts/global/maproot.gd" type="Script" id=1]
 [ext_resource path="res://assets/tiles/tile-grass.png" type="Texture" id=2]
 [ext_resource path="res://assets/tiles/tile-temp.png" type="Texture" id=3]
 [ext_resource path="res://scripts/ui/ui_manager.gd" type="Script" id=4]
+[ext_resource path="res://objects/ui/uitheme.tres" type="Theme" id=5]
+[ext_resource path="res://assets/textures/ui/panel.png" type="Texture" id=6]
 [ext_resource path="res://scripts/ui/interaction_button.gd" type="Script" id=7]
 
 [sub_resource type="TileSet" id=1]
@@ -42,6 +44,15 @@ bg_color = Color( 0, 0, 0, 0.509804 )
 [sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0, 0, 0, 0.392157 )
 
+[sub_resource type="StyleBoxTexture" id=4]
+texture = ExtResource( 6 )
+region_rect = Rect2( 0, 0, 32, 32 )
+margin_left = 5.0
+margin_right = 5.0
+margin_top = 5.0
+margin_bottom = 5.0
+modulate_color = Color( 1, 0.886275, 0.117647, 1 )
+
 [node name="map" type="Node2D"]
 script = ExtResource( 1 )
 
@@ -62,6 +73,7 @@ layer = 0
 [node name="ui_root" type="Control" parent="UILayer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme = ExtResource( 5 )
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_lock_": true,
@@ -185,7 +197,6 @@ __meta__ = {
 }
 
 [node name="player_inventory" type="Panel" parent="UILayer/ui_root"]
-visible = false
 anchor_left = 0.0732422
 anchor_top = 0.111667
 anchor_right = 0.333984
@@ -197,19 +208,29 @@ __meta__ = {
 [node name="scroll" type="ScrollContainer" parent="UILayer/ui_root/player_inventory"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_left = 3.49979
+margin_top = 33.9998
+margin_right = -3.49979
+margin_bottom = -3.0
 
 [node name="grid" type="GridContainer" parent="UILayer/ui_root/player_inventory/scroll"]
-margin_right = 267.0
-margin_bottom = 317.0
+margin_right = 260.0
+margin_bottom = 280.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 5
 
+[node name="title_card" type="Label" parent="UILayer/ui_root/player_inventory"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -40.5
+margin_top = -15.0
+margin_right = 40.5
+margin_bottom = 15.0
+custom_styles/normal = SubResource( 4 )
+text = "Inventory"
+
 [node name="container_inventory" type="Panel" parent="UILayer/ui_root"]
-visible = false
 anchor_left = 0.356445
 anchor_top = 0.111667
 anchor_right = 0.617188
@@ -221,16 +242,27 @@ __meta__ = {
 [node name="scroll" type="ScrollContainer" parent="UILayer/ui_root/container_inventory"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_left = 3.5004
+margin_top = 32.9998
+margin_right = -3.5004
+margin_bottom = -4.0
 
 [node name="grid" type="GridContainer" parent="UILayer/ui_root/container_inventory/scroll"]
-margin_right = 267.001
-margin_bottom = 317.0
+margin_right = 260.0
+margin_bottom = 280.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 5
+
+[node name="title_card" type="Label" parent="UILayer/ui_root/container_inventory"]
+anchor_right = 1.0
+margin_left = 18.5004
+margin_top = -15.0
+margin_right = -18.5004
+margin_bottom = 15.0
+custom_styles/normal = SubResource( 4 )
+text = "Container Name"
+align = 1
 
 [node name="npc_interaction" type="Panel" parent="UILayer/ui_root"]
 visible = false

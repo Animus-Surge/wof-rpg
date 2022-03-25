@@ -6,13 +6,17 @@ export(String, "NPC", "Container", "Switch", "Item") var itype
 export(String) var display_name
 export(Resource) var data # Contains information like speech and such, exported for debug purposes
 
+export(float) var interaction_radius = 30.0
+export(Shape2D) var custom_interaction_bounds
+
 #FOLLOWING TWO LINES ARE TEMPORARY
 onready var container_img = load("res://assets/textures/entity/container_temp.png")
 onready var npc_img = load("res://assets/textures/entity/npc_temp.png")
 
-var entered_body
+var player_in_range = false
 
 func _ready():
+	#Initialize the interactable object type
 	if itype == "Item":
 		for item in gstate.item_data:
 			if item.id == data.item_id:
@@ -32,28 +36,58 @@ func _ready():
 	
 	type = "interactable"
 	
+	#Body detection bounds
+	
 	var interaction_bounds = Area2D.new()
+	interaction_bounds.name = "Interaction Bounds"
 	var collider = CollisionShape2D.new()
-	collider.shape = CircleShape2D.new()
-	collider.shape.radius = 30.0
+	collider.shape = CircleShape2D.new() if !custom_interaction_bounds else custom_interaction_bounds
+	if !custom_interaction_bounds:
+		collider.shape.radius = 30.0
 	interaction_bounds.add_child(collider)
 	add_child(interaction_bounds)
+	
+	#Ensure that the body can handle inputs
+	input_pickable = true
+	
+	#Connect required signals
 	
 	# warning-ignore:return_value_discarded
 	interaction_bounds.connect("body_entered", self, "_area_entered")
 	# warning-ignore:return_value_discarded
 	interaction_bounds.connect("body_exited", self, "_area_exited")
+	
+	# warning-ignore:return_value_discarded
+	#var err = connect("mouse_entered", self, "_mouse_enter")
+	# warning-ignore:return_value_discarded
+	#var err2 = connect("mouse_exited", self, "_mouse_exit")
+	#print(err)
+	#print(err2)
+	
+	name = display_name
+
+#Body handling
 
 func _area_entered(body):
 	if body.type != "player" or (gstate.mplayer && !body.is_network_master()): return
-	if itype == "Container":
-		print(data.items)
-	entered_body = body.name
-	if !pstate.interacting_with:
-		pstate.interacting_with = self
-		pstate.interact_label_text = "Press F to " + ("pick up " + str(data.amount) if itype == "Item" else ("open" if itype == "Container" else ("talk to" if itype == "NPC" else ("activate" if itype == "switch" else "UNKNOWN")))) + " " + display_name
+	player_in_range = true
 
 func _area_exited(body):
-	if body.name == entered_body and (!gstate.mplayer || body.is_network_master()):
-		entered_body = null
-		pstate.interacting_with = null
+	if body.type == "player" and (!gstate.mplayer || body.is_network_master()):
+		player_in_range = false
+
+#Mouse handling
+
+var mouse_over = false
+
+func _input(event):
+	if event is InputEventMouseButton and event.pressed and player_in_range and mouse_over:
+		print("Hewwo!")
+
+func _mouse_entered():
+	print("Enter")
+	mouse_over = true
+
+func _mouse_exited():
+	print("Exit")
+	mouse_over = false

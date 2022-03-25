@@ -1,4 +1,4 @@
-extends Panel
+extends Panel #TODO: make them TextureRects
 
 #appearance vars
 export(Texture) var norm
@@ -21,6 +21,7 @@ func set_item(it, amount):
 	item = it
 	amt = amount
 	$icon.texture = load(item.texture)
+	hint_tooltip = it.name + ": " + it.description
 
 func set_amount(amount):
 	amt = amount
@@ -72,6 +73,9 @@ func drop_success():
 	item = {}
 	amt = 0
 	$icon.texture = null
+	hint_tooltip = ""
 
 func _process(_delta):
 	$Label.text = str(amt) if !item.empty() else ""
+	if item.empty():
+		hint_tooltip = ""

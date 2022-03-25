@@ -59,6 +59,7 @@ func _input(event):
 			if interacting:
 				interacting = false
 				gstate.paused = false
+				pstate.interacting_with = null
 				$npc_interaction.hide()
 				return
 			gstate.paused = !gstate.paused # Only applies to the client, never affects the multiplayer side
@@ -91,9 +92,6 @@ func _input(event):
 			else:
 				$chatpanel/message_box.grab_focus()
 				gstate.paused = true # Act like it's paused so all keystrokes get sent to the chat box
-		elif event.scancode == KEY_F: #TODO: keymapping work
-			if !interacting:
-				pstate.interact()
 		elif event.scancode == KEY_I:
 			if $player_inventory.visible:
 				$player_inventory.hide()
@@ -143,9 +141,8 @@ func _init_inventory():
 		for i in gstate.item_data:
 			if i.id == item.item:
 				slot.set_item(i, item.amount)
-				print("DBG: Setting slot " + str(item.slot) + " to item ID: " + i.id)
 				break
-			printerr("DBG: ERROR: No item with ID: " + item.item)
+			printerr("INVMGR: ERROR: No item with ID: " + item.item)
 
 #Signal callbacks
 func show_inventory():
@@ -174,6 +171,7 @@ func hide_container(container_data):
 	#Update the container data's contents
 	$container_inventory.hide()
 	interacting = false
+	pstate.interacting_with = null
 	
 	container_data.items.clear()
 	
@@ -259,12 +257,14 @@ func option_selected(action):
 			if current_part == null:
 				printerr("INTERACTION: Could not find an interaction segment with the label " + a.label)
 				gstate.paused = false
+				pstate.interacting_with = null
 				interacting = false
 				$npc_interaction.hide()
 			update_interaction()
 		else:
-			printerr("INTERACTION: Unknown type: " + a.type)
+			printerr("INTERACTION: ERROR: Unknown type: " + a.type)
 			gstate.paused = false
+			pstate.interacting_with = null
 			interacting = false
 			$npc_interaction.hide()
 

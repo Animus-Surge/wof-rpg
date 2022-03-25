@@ -1,7 +1,7 @@
 {
   "type":"Interactable",
   "display_name":"Test Interactable",
-  "collideable":false,
+  "collideable":true,
   "position":{"x":50,"y":30},
   "texture_path":"res://assets/textures/entity/container_temp.png",
   "itype":"Container",

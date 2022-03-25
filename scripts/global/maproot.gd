@@ -77,5 +77,5 @@ puppetsync func spawn_object(data):
 	obj.position = Vector2(data.position.x, data.position.y)
 	$YSort.add_child(obj)
 
-func save(save_name):
+func save(_save_name):
 	pass

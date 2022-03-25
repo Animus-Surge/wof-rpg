@@ -38,7 +38,6 @@ func _ready():
 
 #Interaction manager
 var interacting_with = null # Null if not interacting with anything
-var interact_label_text = "Press F to ..."
 
 func interact():
 	if !interacting_with: return
