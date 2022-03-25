@@ -6,8 +6,14 @@ class_name BasicEntity #To let this object become a node to ease creation
 
 #Basic entity doesn't do anything, but does have all the common fields
 
-var type = "entity" #Used for saving system and other checks
+#Signals
+signal sys_input(event)
 
+#Flags
+var mouse_over = false
+
+#Global properties
+var type = "entity" #Used for saving system and other checks
 export(bool) var collideable = true #Whether or not the NPC should have collisions
 export(float) var collider_size = 10.0
 export(Shape2D) var custom_collider
@@ -17,6 +23,11 @@ func _ready():
 	var sprite = Sprite.new()
 	sprite.texture = texture
 	add_child(sprite)
+	
+	#Allow mouse events to be captured
+	input_pickable = true
+	
+	#Collider creation
 	if collideable:
 		var collider = CollisionShape2D.new()
 		collider.name = "Collider"
@@ -24,13 +35,17 @@ func _ready():
 		if !custom_collider:
 			collider.shape.radius = collider_size
 		add_child(collider)
-# warning-ignore:return_value_discarded
-		connect("mouse_entered", self, "_collider_mouse_enter")
-# warning-ignore:return_value_discarded
-		connect("mouse_exited", self, "_collider_mouse_exit")
 
-func _collider_mouse_enter():
-	pass
+func _physics_process(_delta):
+	var mpos = get_global_mouse_position()
+	var space = get_world_2d().direct_space_state
+	var intersections = space.intersect_point(mpos)
+	if intersections.size() > 0:
+		var intersection = intersections[0]
+		if intersection.collider == self:
+			mouse_over = true
+	else:
+		mouse_over = false
 
-func _collider_mouse_exit():
-	pstate.emit("hide_hover_data")
+func _input(event):
+	emit_signal("sys_input", event)

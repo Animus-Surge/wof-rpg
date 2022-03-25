@@ -47,9 +47,6 @@ func _ready():
 	interaction_bounds.add_child(collider)
 	add_child(interaction_bounds)
 	
-	#Ensure that the body can handle inputs
-	input_pickable = true
-	
 	#Connect required signals
 	
 	# warning-ignore:return_value_discarded
@@ -57,12 +54,7 @@ func _ready():
 	# warning-ignore:return_value_discarded
 	interaction_bounds.connect("body_exited", self, "_area_exited")
 	
-	# warning-ignore:return_value_discarded
-	#var err = connect("mouse_entered", self, "_mouse_enter")
-	# warning-ignore:return_value_discarded
-	#var err2 = connect("mouse_exited", self, "_mouse_exit")
-	#print(err)
-	#print(err2)
+	connect("sys_input", self, "input")
 	
 	name = display_name
 
@@ -78,16 +70,7 @@ func _area_exited(body):
 
 #Mouse handling
 
-var mouse_over = false
-
-func _input(event):
-	if event is InputEventMouseButton and event.pressed and player_in_range and mouse_over:
-		print("Hewwo!")
-
-func _mouse_entered():
-	print("Enter")
-	mouse_over = true
-
-func _mouse_exited():
-	print("Exit")
-	mouse_over = false
+func input(event):
+	if event is InputEventMouseButton and event.pressed and mouse_over and player_in_range:
+		pstate.interacting_with = self
+		pstate.interact()

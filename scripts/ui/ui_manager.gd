@@ -273,13 +273,6 @@ func option_selected(action):
 # Stuff that needs to be checked every frame
 
 func _process(_delta):
-	#Interaction label
-	if pstate.interacting_with:
-		$interact_label.text = pstate.interact_label_text
-		$interact_label.show()
-	else:
-		$interact_label.hide()
-	
 	if !$container_inventory.visible and !$npc_interaction.visible: #TODO: check the other interaction UI systems
 		interacting = false
 	
