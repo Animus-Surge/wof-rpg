@@ -1,0 +1,28 @@
+{
+	"color": "#ff00c2b9",
+	"description": "",
+	"display_name": "",
+	"display_name_bool": false,
+	"id": "character-1635736281.json",
+	"mirror_portraits": false,
+	"name": "Surge",
+	"nickname": "Surgie",
+	"nickname_bool": true,
+	"offset_x": 0,
+	"offset_y": 0,
+	"portraits": [
+		{
+			"name": "Default",
+			"path": "res://assets/textures/reactions/surge/reaction-cute.png"
+		},
+		{
+			"name": "normal",
+			"path": "res://assets/textures/reactions/surge/reaction-norm.png"
+		},
+		{
+			"name": "confused",
+			"path": "res://assets/textures/reactions/surge/reaction-confused.png"
+		}
+	],
+	"scale": 100
+}

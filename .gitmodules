@@ -1,0 +1,3 @@
+[submodule "dialogic"]
+	path = dialogic
+	url = https://github.com/coppolaemilio/dialogic
