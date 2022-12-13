@@ -61,11 +61,11 @@ func _ready():
 #Body handling
 
 func _area_entered(body):
-	if body.type != "player" or (gstate.mplayer && !body.is_network_master()): return
+	if body.type != "player" or (gstate.is_multiplayer && !body.is_network_master()): return
 	player_in_range = true
 
 func _area_exited(body):
-	if body.type == "player" and (!gstate.mplayer || body.is_network_master()):
+	if body.type == "player" and (!gstate.is_multiplayer || body.is_network_master()):
 		player_in_range = false
 
 #Mouse handling

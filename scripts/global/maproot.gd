@@ -4,7 +4,7 @@ var player_object = load("res://objects/entity/player.tscn")
 
 puppetsync func spawn_player(id, pos, _data):
 	#TODO: loading the player's position from the global data file
-	if !gstate.mplayer:
+	if !gstate.is_multiplayer:
 		var player = player_object.instance()
 		player.position = pos
 		player.name = str(id)

@@ -5,3 +5,6 @@
 *.pck
 *.zip
 *.exe
+
+# Using Godot with VSCode
+/.mono/

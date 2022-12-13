@@ -40,6 +40,11 @@ _global_script_classes=[ {
 "path": "res://scripts/interaction/interaction_object.gd"
 }, {
 "base": "Resource",
+"class": "Item",
+"language": "GDScript",
+"path": "res://scripts/struct/item.gd"
+}, {
+"base": "Resource",
 "class": "ItemObject",
 "language": "GDScript",
 "path": "res://scripts/interaction/item_obj.gd"
@@ -61,6 +66,7 @@ _global_script_class_icons={
 "DamageableEntity": "",
 "InteractableEntity": "",
 "InteractionObject": "",
+"Item": "",
 "ItemObject": "",
 "NPCObject": "",
 "Player": ""
@@ -145,6 +151,10 @@ ui_down={
 file_logging/enable_file_logging=true
 file_logging/log_path="user://logs/wof_rpg.log"
 file_logging/max_log_files=10
+
+[mono]
+
+project/assembly_name="WoF RPG"
 
 [physics]
 

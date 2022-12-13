@@ -10,7 +10,7 @@ puppet var ppos = Vector2()
 
 func _ready():
 	type = "player"
-	if !gstate.mplayer:
+	if !gstate.is_multiplayer:
 		$Camera2D.current = true
 		$Label.text = ""
 		return
@@ -37,25 +37,26 @@ func _input(event):
 			down = false
 
 func _process(_delta):
-	if (!gstate.mplayer or is_network_master()) and !gstate.paused:
+	if (!gstate.is_multiplayer or is_network_master()) and !gstate.is_paused:
 		var mdir = Vector2()
 		mdir.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 		mdir.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 		
 		vel = mdir.normalized() * speed
 		
-		if gstate.mplayer:
+		if gstate.is_multiplayer:
 			rset_unreliable("pvel", vel)
 			rset_unreliable("ppos", position)
-	elif gstate.mplayer:
+	elif gstate.is_multiplayer:
 		vel = pvel
-		if !gstate.paused: # Prevent the player from jumping back to (0,0)
+		if !gstate.is_paused: # Prevent the player from jumping back to (0,0)
 			position = ppos
 	
-	vel = move_and_slide(vel)
+	if !gstate.is_paused:
+		vel = move_and_slide(vel)
 	
 	#TODO: break this out in network system
 	$RayCast2D.look_at(get_global_mouse_position())
 	
-	if gstate.mplayer and !is_network_master():
+	if gstate.is_multiplayer and !is_network_master():
 		ppos = position
