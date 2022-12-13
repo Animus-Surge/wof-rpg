@@ -93,21 +93,24 @@ func _ready():
 	#Check dedicated server file in exe dir
 	var exeloc = OS.get_executable_path().get_base_dir()
 	print("SERVER: Checking for server.json...")
+	print(exeloc)
 	var f = File.new()
 	var exists = f.open(exeloc + "/server.json", File.READ)
 	if exists == OK:
-		var sdata = JSON.parse(f.get_as_text()).result
-		if sdata.has_all(["port", "name", "description", "max_players"]):
-			print("SERVER: Loading server.json...")
-			multiplayer_max_players = sdata.max_players
-			server_name = sdata.name
-			server_description = sdata.description
-			server_create(sdata.port)
-		else:
-			
-			printerr("SERVER: Error: server.json missing required keys. Make sure the file has ALL of these keys: port, name, description, max_players")
-			#TODO: default server attributes
-			get_tree().quit()
+		var file_text = f.get_as_text()
+		f.close()
+		
+		var sdata = {}
+		if not file_text.empty():
+			sdata = JSON.parse(file_text).result
+
+		#Check the keys to see what the file has, and if a key is not found
+		if not sdata.has("port"): sdata["port"] = 25622
+		if not sdata.has("name"): sdata["name"] = "Server Name"
+		if not sdata.has("description"): sdata["description"] = "Server description"
+		if not sdata.has("max_players"): sdata["max_players"] = 20 
+		
+		server_create(sdata)
 		return
 	else:
 		print("SERVER: File not found or inaccessible. Starting client instance. (Error code:" + str(exists) + ")")
@@ -141,7 +144,7 @@ var emsg
 
 var auth = false
 var auth_token
-var username
+var username = "Surge"
 
 ###############################
 # In-game Notification System #
@@ -190,7 +193,13 @@ puppetsync func unregister_player(id):
 	print("UNREGISTER: Unregistered player: " + str(id))
 
 #LAN multiplayer system (local server management)
-func server_create(port = 25622):
+func server_create(data: Dictionary):
+	
+	multiplayer_max_players = data.max_players
+	server_name = data.name
+	server_description = data.description
+	multiplayer_port = data.port
+	
 	#Load the map
 	load_scene("map")
 	
@@ -202,7 +211,7 @@ func server_create(port = 25622):
 	is_multiplayer = true
 	is_server_host = true
 	var peer = NetworkedMultiplayerENet.new()
-	peer.create_server(port, multiplayer_max_players) # All local server instances will be limited to 20 players
+	peer.create_server(multiplayer_port, multiplayer_max_players) # All local server instances will be limited to 20 players
 	get_tree().set_network_peer(peer)
 	print("SERVER: Up on port: " + str(multiplayer_port))
 	hide_loadingscreen() #Useful if the server's running in graphical mode
@@ -244,7 +253,7 @@ remote func register_player_server(data):
 	rpc("register_player", connection_id, data)
 
 #Client system
-func join_server(ip, port=25622):
+func join_server(ip, port=12345):
 	multiplayer_port = port
 	multiplayer_ip = ip
 # warning-ignore:return_value_discarded

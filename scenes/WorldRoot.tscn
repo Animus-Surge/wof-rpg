@@ -122,7 +122,6 @@ script = ExtResource( 8 )
 __meta__ = {
 "_edit_group_": true
 }
-type = "key"
 
 [node name="Sprite" type="Sprite" parent="key"]
 

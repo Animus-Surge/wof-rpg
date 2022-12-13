@@ -1,21 +1,25 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scripts/global/scene_root.gd" type="Script" id=1]
 [ext_resource path="res://objects/ui/font-px-size1.tres" type="DynamicFont" id=2]
 [ext_resource path="res://objects/ui/font-px-size3.tres" type="DynamicFont" id=3]
 [ext_resource path="res://scripts/ui/settings.gd" type="Script" id=4]
+[ext_resource path="res://scripts/ui/mainmenu.gd" type="Script" id=5]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.0666667, 0.0666667, 0.0666667, 1 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 0, 0, 0.764706 )
 
 [node name="menus" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 scene_name = "menus"
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource( 5 )
 
 [node name="bg" type="Panel" parent="."]
 anchor_right = 1.0
@@ -46,9 +50,6 @@ margin_right = -193.0
 margin_bottom = 25.0
 custom_fonts/font = ExtResource( 3 )
 text = "Play"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="settingsbtn" type="Button" parent="bg"]
 anchor_left = 0.5
@@ -102,7 +103,53 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[connection signal="pressed" from="bg/playbtn" to="." method="play_press"]
-[connection signal="pressed" from="bg/settingsbtn" to="." method="settings_press"]
-[connection signal="pressed" from="bg/creditsbtn" to="." method="credits_press"]
-[connection signal="pressed" from="bg/quitbtn" to="." method="quit_press"]
+[node name="playpanel" type="Panel" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 2 )
+
+[node name="multiplayer_port" type="LineEdit" parent="playpanel"]
+margin_left = 157.0
+margin_top = 260.0
+margin_right = 368.0
+margin_bottom = 284.0
+
+[node name="multiplayer_ip" type="LineEdit" parent="playpanel"]
+margin_left = 157.0
+margin_top = 296.0
+margin_right = 368.0
+margin_bottom = 320.0
+
+[node name="multiplayer_join" type="Button" parent="playpanel"]
+margin_left = 157.0
+margin_top = 333.0
+margin_right = 236.0
+margin_bottom = 353.0
+text = "Join Server"
+
+[node name="singleplayer_join" type="Button" parent="playpanel"]
+margin_left = 567.0
+margin_top = 296.0
+margin_right = 646.0
+margin_bottom = 316.0
+text = "Play Singleplayer"
+
+[node name="play_cancel" type="Button" parent="playpanel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -59.5
+margin_top = -52.0
+margin_right = 59.5
+margin_bottom = -32.0
+text = "Cancel"
+
+[connection signal="pressed" from="bg/playbtn" to="Node" method="_playbutton_press"]
+[connection signal="pressed" from="bg/settingsbtn" to="Node" method="_settingsbutton_press"]
+[connection signal="pressed" from="bg/creditsbtn" to="Node" method="_creditsbutton_press"]
+[connection signal="pressed" from="bg/quitbtn" to="Node" method="_quitbutton_press"]
+[connection signal="pressed" from="playpanel/multiplayer_join" to="Node" method="_multiplayer_join_press"]
+[connection signal="pressed" from="playpanel/singleplayer_join" to="Node" method="_singleplayer_join_press"]
+[connection signal="pressed" from="playpanel/play_cancel" to="Node" method="_playpanel_hide"]
