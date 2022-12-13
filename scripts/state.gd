@@ -104,7 +104,9 @@ func _ready():
 			server_description = sdata.description
 			server_create(sdata.port)
 		else:
+			
 			printerr("SERVER: Error: server.json missing required keys. Make sure the file has ALL of these keys: port, name, description, max_players")
+			#TODO: default server attributes
 			get_tree().quit()
 		return
 	else:

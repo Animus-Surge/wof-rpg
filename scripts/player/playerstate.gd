@@ -44,6 +44,7 @@ func interact():
 	if interacting_with.data == null: 
 		push_warning("PSTATE: Warning: Can't interact with an interactable with null data field")
 		return
+	interacting_with.connect("player_left", self, "_player_left")
 	match interacting_with.itype:
 		"Item":
 			var i = {}
@@ -66,3 +67,15 @@ func interact():
 			pass #TODO: add the rest of them
 
 #signal passthroughs
+
+func _player_left(object):
+	match object.itype:
+		"Item":pass
+		"Container":
+			var key = InputEventKey.new()
+			key.scancode = KEY_ESCAPE
+			key.pressed = true
+			Input.parse_input_event(key)
+		"NPC":pass #WIll likley block all movement input when interacting with an NPC
+	
+	object.disconnect("player_left", self, "_player_left")

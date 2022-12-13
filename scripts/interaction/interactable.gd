@@ -9,6 +9,8 @@ export(Resource) var data # Contains information like speech and such, exported 
 export(float) var interaction_radius = 30.0
 export(Shape2D) var custom_interaction_bounds
 
+signal player_left(object)
+
 #FOLLOWING TWO LINES ARE TEMPORARY
 onready var container_img = load("res://assets/textures/entity/container_temp.png")
 onready var npc_img = load("res://assets/textures/entity/npc_temp.png")
@@ -66,6 +68,7 @@ func _area_entered(body):
 
 func _area_exited(body):
 	if body.type == "player" and (!gstate.is_multiplayer || body.is_network_master()):
+		emit_signal("player_left", self)
 		player_in_range = false
 
 #Mouse handling

@@ -6,7 +6,7 @@ onready var inv_slot = load("res://objects/ui/inv_item.tscn")
 #Flags
 var interacting = false
 
-func _ready():	
+func _ready():
 	#Connect all the helper signals
 # warning-ignore:return_value_discarded
 	gstate.connect("chat_message", self, "chat_message")
@@ -114,7 +114,7 @@ func quit():
 		gstate.deliberate_disconnect = true
 		gstate.auto_hide_loadscreen = true
 		get_tree().set_network_peer(null)
-	gstate.paused = false
+	gstate.is_paused = false
 	gstate.load_scene("menus")
 
 #Chat handler
@@ -224,7 +224,7 @@ var interaction
 var current_part
 
 func _npc_interact(data):
-	gstate.paused = true
+	gstate.is_paused = true
 	interaction = data.interaction
 	current_part = data.interaction.entry
 	interacting = true
@@ -249,21 +249,21 @@ func update_interaction():
 func option_selected(action):
 	for a in action.action:
 		if a.type == "exit":
-			gstate.paused = false
+			gstate.is_paused = false
 			$npc_interaction.hide()
 			interacting = false
 		elif a.type == "label":
 			current_part = interaction.get(a.label)
 			if current_part == null:
 				printerr("INTERACTION: Could not find an interaction segment with the label " + a.label)
-				gstate.paused = false
+				gstate.is_paused = false
 				pstate.interacting_with = null
 				interacting = false
 				$npc_interaction.hide()
 			update_interaction()
 		else:
 			printerr("INTERACTION: ERROR: Unknown type: " + a.type)
-			gstate.paused = false
+			gstate.is_paused = false
 			pstate.interacting_with = null
 			interacting = false
 			$npc_interaction.hide()
@@ -283,3 +283,4 @@ func _process(_delta):
 		if !i_slot.item.empty():
 			pstate.inventory.append({"slot":slot, "item":i_slot.item.id, "amount":i_slot.amt})
 		slot += 1
+

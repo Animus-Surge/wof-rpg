@@ -89,7 +89,7 @@ modulate_color = Color( 1, 0.666667, 0.262745, 1 )
 
 [resource]
 default_font = ExtResource( 1 )
-Button/fonts/font = null
+Button/fonts/font = ExtResource( 1 )
 Button/styles/disabled = SubResource( 1 )
 Button/styles/focus = SubResource( 2 )
 Button/styles/hover = SubResource( 3 )
@@ -109,7 +109,7 @@ Panel/styles/panel = SubResource( 16 )
 PopupPanel/styles/panel = SubResource( 17 )
 ProgressBar/colors/font_color = Color( 0.94, 0.94, 0.94, 1 )
 ProgressBar/colors/font_color_shadow = Color( 0, 0, 0, 1 )
-ProgressBar/fonts/font = null
+ProgressBar/fonts/font = ExtResource( 1 )
 ProgressBar/styles/bg = null
 ProgressBar/styles/fg = null
 TooltipLabel/colors/font_color = Color( 1, 1, 1, 1 )
