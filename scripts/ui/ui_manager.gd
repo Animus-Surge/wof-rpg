@@ -35,7 +35,7 @@ func _ready():
 	$npc_interaction.hide()
 	
 	#Multiplayer only stuff
-	if gstate.mplayer:
+	if gstate.is_multiplayer:
 		$chatpanel.show()
 	else:
 		$chatpanel.hide()
@@ -44,12 +44,12 @@ func server_connected():
 	$chatpanel.show()
 
 func _input(event):
-	if gstate.hosting_server: return # Ignore all keyboard inputs if we are a server (TODO: character on hosted server)
+	if gstate.is_server_host: return # Ignore all keyboard inputs if we are a server (TODO: character on hosted server)
 	if event is InputEventKey and event.pressed:
 		if event.scancode == KEY_ESCAPE:
-			if gstate.paused and $chatpanel/message_box.has_focus():
+			if gstate.is_paused and $chatpanel/message_box.has_focus():
 				$chatpanel/message_box.release_focus()
-				gstate.paused = false
+				gstate.is_paused = false
 				return
 			if $player_inventory.visible:
 				$player_inventory.hide()
@@ -62,9 +62,9 @@ func _input(event):
 				pstate.interacting_with = null
 				$npc_interaction.hide()
 				return
-			gstate.paused = !gstate.paused # Only applies to the client, never affects the multiplayer side
-			$pausemenu.visible = gstate.paused
-		elif event.scancode == KEY_ENTER and gstate.mplayer:
+			gstate.is_paused = !gstate.is_paused # Only applies to the client, never affects the multiplayer side
+			$pausemenu.visible = gstate.is_paused
+		elif event.scancode == KEY_ENTER and gstate.is_multiplayer:
 			if $chatpanel/message_box.has_focus():
 				var msg = $chatpanel/message_box.text
 				#TODO: chat commands (maybe)
@@ -78,7 +78,7 @@ func _input(event):
 				#TODO
 				if msg.empty():
 					$chatpanel/message_box.release_focus()
-					gstate.paused = false
+					gstate.is_paused = false
 					return
 				var id = get_tree().get_network_unique_id()
 				#TODO: dm and party chat handling
@@ -103,14 +103,14 @@ func _input(event):
 #Pause screen
 
 func unpause():
-	gstate.paused = false
+	gstate.is_paused = false
 	$pausemenu.hide()
 
 func settings():
 	pass # Replace with function body.
 
 func quit():
-	if gstate.mplayer:
+	if gstate.is_multiplayer:
 		gstate.deliberate_disconnect = true
 		gstate.auto_hide_loadscreen = true
 		get_tree().set_network_peer(null)

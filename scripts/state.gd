@@ -19,9 +19,9 @@ signal mp_fail()
 
 #Global constants
 
-const V_MJR = 1
-const V_MNR = 0
-const V_PAT = 0
+const VERSION_MAJOR = 1
+const VERSION_MINOR = 0
+const VERSION_PATCH = 0
 
 #Global data
 var item_data
@@ -35,9 +35,9 @@ var current_save #Used for loading and saving game state
 const debug = false
 
 #Game state variables
-var paused = false
-var mplayer = false
-var hosting_server = false
+var is_paused = false
+var is_multiplayer = false
+var is_server_host = false
 
 var auto_hide_loadscreen = true
 
@@ -99,9 +99,9 @@ func _ready():
 		var sdata = JSON.parse(f.get_as_text()).result
 		if sdata.has_all(["port", "name", "description", "max_players"]):
 			print("SERVER: Loading server.json...")
-			mult_max_players = sdata.max_players
-			sname = sdata.name
-			sdesc = sdata.description
+			multiplayer_max_players = sdata.max_players
+			server_name = sdata.name
+			server_description = sdata.description
 			server_create(sdata.port)
 		else:
 			printerr("SERVER: Error: server.json missing required keys. Make sure the file has ALL of these keys: port, name, description, max_players")
@@ -129,7 +129,7 @@ func _ready():
 
 func _notification(what):
 	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
-		if current_scene == "map" and !mplayer:
+		if current_scene == "map" and !is_multiplayer:
 			get_node("/root/map").save(current_save)
 		get_tree().quit() #TODO: saving
 
@@ -176,12 +176,12 @@ var players = {}
 
 var max_attempts = 3 #Only try to connect 3 times, then fail
 
-var mult_port
-var mult_ip
-var mult_max_players
+var multiplayer_port
+var multiplayer_ip
+var multiplayer_max_players
 
-var sname
-var sdesc
+var server_name
+var server_description
 
 puppetsync func unregister_player(id):
 	players.erase(id)
@@ -197,12 +197,12 @@ func server_create(port = 25622):
 	#Now load the save
 	
 	#And create the server
-	mplayer = true
-	hosting_server = true
+	is_multiplayer = true
+	is_server_host = true
 	var peer = NetworkedMultiplayerENet.new()
-	peer.create_server(port, mult_max_players) # All local server instances will be limited to 20 players
+	peer.create_server(port, multiplayer_max_players) # All local server instances will be limited to 20 players
 	get_tree().set_network_peer(peer)
-	print("SERVER: Up on port: " + str(mult_port))
+	print("SERVER: Up on port: " + str(multiplayer_port))
 	hide_loadingscreen() #Useful if the server's running in graphical mode
 
 func player_connected(id):
@@ -216,36 +216,35 @@ func player_disconnected(id):
 		players.erase(id)
 
 remote func populate():
-	var cid = get_tree().get_rpc_sender_id()
-	print("POPULATE: Player " + str(cid) + " populate() call")
+	var connection_id = get_tree().get_rpc_sender_id()
+	print("POPULATE: Player " + str(connection_id) + " populate() call")
 	
 	var map = get_node("/root/map")
 	
 	#Spawn the objects on the player's map
 	for object in map.get_children():
 		if players.has(object.name): continue #Ignore player objects
-		
 	
-	for plr in players:
-		map.rpc_id(cid, "spawn_player", plr, Vector2.ZERO, players[plr])
+	for player in players:
+		map.rpc_id(connection_id, "spawn_player", player, Vector2.ZERO, players[player])
 	
-	map.rpc("spawn_player", cid, Vector2.ZERO, players[cid])
+	map.rpc("spawn_player", connection_id, Vector2.ZERO, players[connection_id])
 
 remote func register_player_server(data):
-	var cid = get_tree().get_rpc_sender_id()
-	print("REGISTER: Player " + str(cid) + " registering...")
+	var connection_id = get_tree().get_rpc_sender_id()
+	print("REGISTER: Player " + str(connection_id) + " registering...")
 	
-	players[cid] = data
+	players[connection_id] = data
 	
-	for plr in players:
-		rpc_id(cid, "register_player", plr, players[plr])
+	for player in players:
+		rpc_id(connection_id, "register_player", player, players[player])
 	
-	rpc("register_player", cid, data)
+	rpc("register_player", connection_id, data)
 
 #Client system
 func join_server(ip, port=25622):
-	mult_port = port
-	mult_ip = ip
+	multiplayer_port = port
+	multiplayer_ip = ip
 # warning-ignore:return_value_discarded
 	auto_hide_loadscreen = false
 	load_scene("map")
@@ -253,13 +252,13 @@ func join_server(ip, port=25622):
 	join()
 
 func connection_success():
-	print("CONNECTION: Connected successfully to: " + mult_ip + ":" + str(mult_port))
+	print("CONNECTION: Connected successfully to: " + multiplayer_ip + ":" + str(multiplayer_port))
 	emit_signal("mp_connected")
-	mplayer = true
+	is_multiplayer = true
 	prestart()
 
 func connection_failed():
-	print("CONNECTION: Failed to connect to: " + mult_ip + ":" + str(mult_port))
+	print("CONNECTION: Failed to connect to: " + multiplayer_ip + ":" + str(multiplayer_port))
 	emit_signal("mp_fail")
 	auto_hide_loadscreen = true
 	if(attempt >= max_attempts):
@@ -273,13 +272,13 @@ func connection_failed():
 func disconnected():
 	print("CONNECTION: Disconnected. Deliberate: " + str(deliberate_disconnect))
 	emit_signal("mp_disconnected")
-	mplayer = false
+	is_multiplayer = false
 	auto_hide_loadscreen = true
 	load_scene("menus")
 
 func join():
 	var peer = NetworkedMultiplayerENet.new()
-	peer.create_client(mult_ip, mult_port)
+	peer.create_client(multiplayer_ip, multiplayer_port)
 	get_tree().set_network_peer(peer)
 
 func prestart():
@@ -374,7 +373,7 @@ func load_save(save_name, save_path = "user://saves/"):
 	yield(self, "done")
 	
 	#Make sure the player won't die while loading the scene
-	paused = true
+	is_paused = true
 	
 	#Spawn the player and initialize the playerstate
 	get_node("/root/map").spawn_player("player", Vector2(cdata.position.x, cdata.position.y), {})
@@ -402,7 +401,7 @@ func load_save(save_name, save_path = "user://saves/"):
 	
 	#Finally done loading, so show the map to the player and unpause the game!
 	auto_hide_loadscreen = true
-	paused = false
+	is_paused = false
 	get_node("/root/loading_screen").hide_ls()
 
 func create_save(save_name):
@@ -482,7 +481,7 @@ var tmax = 100
 
 func load_scene(scene_name):
 	print("SCN_MGR: Loading scene: " + scene_name)
-	#Check to see if the loading screen hasn't been deleted accidentally
+	#Check to see if the loading screen hasn't been deleted acconnection_identally
 	if !get_node("/root/loading_screen"):
 		var err = get_tree().change_scene("res://scenes/loading_screen.tscn") # Also useful for debugging things, as the true debug system will not automatically load the loading screen
 		if err != OK:
