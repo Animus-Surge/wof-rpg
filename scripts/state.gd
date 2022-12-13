@@ -481,7 +481,7 @@ var tmax = 100
 
 func load_scene(scene_name):
 	print("SCN_MGR: Loading scene: " + scene_name)
-	#Check to see if the loading screen hasn't been deleted acconnection_identally
+	#Check to see if the loading screen hasn't been deleted accidentally
 	if !get_node("/root/loading_screen"):
 		var err = get_tree().change_scene("res://scenes/loading_screen.tscn") # Also useful for debugging things, as the true debug system will not automatically load the loading screen
 		if err != OK:
