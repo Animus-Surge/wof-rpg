@@ -26,6 +26,10 @@ func amount_change(change_amount):
 	else:
 		$Label.text = ""
 
+# Drag and drop functionality
+
+# TODO: rewrite this to allow for better control over the functionality
+
 func can_drop_data(_position, data):
 	if data is Dictionary:
 		if data.has_all(["item", "count"]):

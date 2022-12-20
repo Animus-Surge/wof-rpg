@@ -362,7 +362,7 @@ func load_save(save_name, save_path = "user://saves/"):
 	var _data_path = full_path + "data/" #contains things like npc data and reputation in cities
 	
 	var data = load_data_file(full_path + "save.json")
-	var cdata = load_data_file(full_path + "cdata.json")
+	var cdata = load_data_file(full_path + "players/player_uid.json")
 	
 	#Make sure the save exists
 	if data.empty() or cdata.empty():
@@ -388,8 +388,8 @@ func load_save(save_name, save_path = "user://saves/"):
 	
 	#Spawn the player and initialize the playerstate
 	get_node("/root/map").spawn_player("player", Vector2(cdata.position.x, cdata.position.y), {})
-	pstate.inventory = cdata.inventory
-	pstate.inv_size = cdata.inventory_slots
+	pstate.inventory = cdata.inventory.main
+	pstate.inv_size = cdata.inventory.slots
 	
 	pstate.emit_signal("init_inventory")
 	
@@ -415,22 +415,13 @@ func load_save(save_name, save_path = "user://saves/"):
 	is_paused = false
 	get_node("/root/loading_screen").hide_ls()
 
-func create_save(save_name):
-	var directory = Directory.new()
-	directory.open("user://saves")
-	
-	if directory.dir_exists(save_name):
-		print("SAVESYS: Save already exists with the name " + save_name)
-		return
-	
-	directory.make_dir(save_name)
-	directory.change_dir(save_name)
-	directory.make_dir("world")
-	directory.make_dir("data")
-	
-	current_save = save_name
-	
-	save_game_file("save.json", {"save_name":save_name})
+# Saving a game
+
+"""
+Saving a game:
+
+
+"""
 
 func load_data_file(path) -> Dictionary:
 	var file = File.new()
@@ -441,43 +432,6 @@ func load_data_file(path) -> Dictionary:
 	print("SAVESYS: Loaded data file from path: " + path)
 	return JSON.parse(file.get_as_text()).result
 
-func save_game_file(_file_name, _data, is_global = false): #Saves to game save directory unless global file
-	var directory = "user://" + ("saves/" + current_save + "/" if !is_global else "") + _file_name
-	print("SAVESYS: Saving data file: " + directory)
-	
-	var file = File.new()
-	var err = file.open(directory, File.WRITE)
-	if err != OK:
-		printerr("SAVESYS: Error: Failed to open data file " + directory + ": Error code " + str(err))
-		return
-	
-	file.store_string(JSON.print(_data))
-	file.close()
-	
-	print("SAVESYS: Created and saved data file " + directory)
-
-#Only needs the required fields to be updated.
-func update_game_file(file_name, data: Dictionary):
-	var dir = "user://saves/" + current_save + "/" + file_name
-	var file = File.new()
-	var err = file.open(dir, File.READ)
-	if err != OK:
-		printerr("SAVESYS: Error: Failed to open data file " + dir + ": Error code: " + str(err))
-		return
-	
-	var file_data = JSON.parse(file.get_as_text()).result
-	for key in data.keys():
-		if file_data.has(key):
-			file_data[key] = data[key]
-		else:
-			print("SAVESYS: Warning: Key " + str(key) + " does not exist in data file " + dir)
-	
-	
-	file.open(dir, File.WRITE)
-	file.store_string(JSON.print(file_data))
-	file.close()
-	
-	print("SAVESYS: Data file " + dir + " updated")
 
 #################
 # Scene Manager #

@@ -1,0 +1,30 @@
+{
+  "position":{"x":0,"y":-100},
+  "character":"unimpl",
+  "inventory":{
+    "slots":25,
+    "main":[
+      {
+        "slot":0,
+        "item":"temp_1",
+        "amount":5
+      }
+    ],
+    "equipment":{
+      "armor":{
+        "head":"",
+        "body":"",
+        "legs":"",
+        "tail":"",
+        "wings":""
+      },
+      "slot_primary":"",
+      "slot_secondary":"",
+      "slot_tail":"",
+      "slot_ring":"",
+      "slot_necklace":"",
+      "slot_bracelet":""
+    }
+  }
+
+}
