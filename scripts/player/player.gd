@@ -3,12 +3,12 @@ extends "res://scripts/entity/damageable.gd"
 class_name Player
 
 export(int) var speed = 100
-var vel  = Vector2()
+var velocity  = Vector2()
 
-puppet var pvel = Vector2()
-puppet var ppos = Vector2()
+puppet var prevVelocity = Vector2()
+puppet var prevPos = Vector2()
 
-func _ready():
+func _ready():	
 	type = "player"
 	if !gstate.is_multiplayer:
 		$Camera2D.current = true
@@ -21,7 +21,7 @@ func _ready():
 	else:
 		$Label.text = gstate.players[pid].uname
 	
-	ppos = position
+	prevPos = position
 
 var down
 
@@ -42,21 +42,21 @@ func _process(_delta):
 		mdir.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 		mdir.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 		
-		vel = mdir.normalized() * speed
+		velocity = mdir.normalized() * speed
 		
 		if gstate.is_multiplayer:
-			rset_unreliable("pvel", vel)
-			rset_unreliable("ppos", position)
+			rset_unreliable("prevVelocity", velocity)
+			rset_unreliable("prevPos", position)
 	elif gstate.is_multiplayer:
-		vel = pvel
+		velocity = prevVelocity
 		if !gstate.is_paused: # Prevent the player from jumping back to (0,0)
-			position = ppos
+			position = prevPos
 	
 	if !gstate.is_paused:
-		vel = move_and_slide(vel)
+		velocity = move_and_slide(velocity)
 	
 	#TODO: break this out in network system
 	$RayCast2D.look_at(get_global_mouse_position())
 	
 	if gstate.is_multiplayer and !is_network_master():
-		ppos = position
+		prevPos = position
