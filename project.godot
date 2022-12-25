@@ -24,6 +24,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/interaction/container_obj.gd"
 }, {
+"base": "Label",
+"class": "DamageLabel",
+"language": "GDScript",
+"path": "res://scripts/entity/damage_label.gd"
+}, {
 "base": "KinematicBody2D",
 "class": "DamageableEntity",
 "language": "GDScript",
@@ -63,6 +68,7 @@ _global_script_class_icons={
 "BasicEnemy": "",
 "BasicEntity": "",
 "ContainerObject": "",
+"DamageLabel": "",
 "DamageableEntity": "",
 "InteractableEntity": "",
 "InteractionObject": "",

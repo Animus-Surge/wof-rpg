@@ -19,46 +19,29 @@ export(int) var regen_rate = 1
 
 #Internal globals
 var hp
-var dmg_label
-var dmg_label_timer
 
 func _ready():
 	type = "damageable"
 	hp = max_hp #TODO: save system handling
 	texture = tx
-	
-	#Damage label
-	var damage_label_timer = Timer.new()
-	damage_label_timer.wait_time = 2
-	damage_label_timer.one_shot = true
-	add_child(damage_label_timer)
-	damage_label_timer.connect("timeout", self, "hide_label")
-	dmg_label_timer = damage_label_timer
-	var damage_label = Label.new()
-	damage_label.rect_position = Vector2(-5, -20)
-	damage_label.name = "damage_label"
-	damage_label.set("custom_colors/font_color", Color.red)
-	dmg_label = damage_label
-	dmg_label.hide()
-	add_child(damage_label)
-	
+
 	#Health regen
 	if regen_enabled:
 		pass #TODO
 
 func hurt(damage):
-	dmg_label.text = str(damage)
-	dmg_label.show()
-	dmg_label_timer.start()
+	var damage_label = DamageLabel.new()
+	add_child(damage_label)
+	damage_label.text = str(damage)
+	damage_label.color_set(Color(1, 0, 0)) #TODO: update color based on type of damage, etc.
+	damage_label.show()
+
 	if max_hp == -1: return
 	hp -= damage
 
 func _process(_delta):
 	if hp <= 0 && max_hp != -1:
 		emit_signal("dead")
-
-func hide_label():
-	dmg_label.hide()
 
 func regen():
 	if max_hp == -1: return
