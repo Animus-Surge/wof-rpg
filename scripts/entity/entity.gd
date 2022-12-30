@@ -43,6 +43,7 @@ func _physics_process(_delta):
 	if intersections.size() > 0:
 		var intersection = intersections[0]
 		if intersection.collider == self:
+			print(type)
 			mouse_over = true
 	else:
 		mouse_over = false

@@ -33,6 +33,7 @@ func can_drop_data(_position, data):
 func drop_data(_position, data):
 	#Check issues
 	if data.last_slot == self: return
+	
 	elif !item.empty() and amt == item.stack_size and item == data.item:
 		data.last_slot.set_item(data.item, data.amt)
 		return

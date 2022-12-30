@@ -38,6 +38,7 @@ func _ready():
 
 #Interaction manager
 var interacting_with = null # Null if not interacting with anything
+var hovering_over = null # Null if nothing is being hovered over
 
 func interact():
 	if !interacting_with: return

@@ -273,9 +273,13 @@ func option_selected(action):
 # Stuff that needs to be checked every frame
 
 func _process(_delta):
+	# Tooltip Handling
+	
+	
 	if !$container_inventory.visible and !$npc_interaction.visible: #TODO: check the other interaction UI systems
 		interacting = false
 	
+	#TODO: perform a check to see if the inventory was modified (i.e. a "dirty" flag)
 # warning-ignore:shadowed_variable
 	pstate.inventory.clear()
 	var slot = 0
