@@ -8,5 +8,6 @@
   "hp":100,
   "regen":false,
   "regen_cooldown":1.0,
-  "regen_rate":1.0
+  "regen_rate":1.0,
+  "tooltip_text":"Basic Enemy"
 }

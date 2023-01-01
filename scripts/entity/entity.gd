@@ -18,6 +18,7 @@ export(bool) var collideable = true #Whether or not the NPC should have collisio
 export(float) var collider_size = 10.0
 export(Shape2D) var custom_collider
 export(Texture) var texture
+export(String, MULTILINE) var tooltip_text
 
 func _ready():
 	var sprite = Sprite.new()
@@ -43,10 +44,11 @@ func _physics_process(_delta):
 	if intersections.size() > 0:
 		var intersection = intersections[0]
 		if intersection.collider == self:
-			print(type)
 			mouse_over = true
+			pstate.hovering_over = self
 	else:
 		mouse_over = false
+		pstate.hovering_over = null # TODO: check for multiple hovers
 
 func _input(event):
 	emit_signal("sys_input", event)

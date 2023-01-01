@@ -1,6 +1,6 @@
-[gd_resource type="Theme" load_steps=21 format=2]
+[gd_resource type="Theme" load_steps=20 format=2]
 
-[ext_resource path="res://objects/ui/font-px-size2.tres" type="DynamicFont" id=1]
+[ext_resource path="res://objects/ui/font-px-size4.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/textures/ui/panel.png" type="Texture" id=2]
 
 [sub_resource type="StyleBoxTexture" id=1]
@@ -78,18 +78,8 @@ margin_top = 3.0
 margin_bottom = 3.0
 modulate_color = Color( 1, 0.741176, 0.231373, 1 )
 
-[sub_resource type="StyleBoxTexture" id=18]
-texture = ExtResource( 2 )
-region_rect = Rect2( 0, 0, 32, 32 )
-margin_left = 3.0
-margin_right = 3.0
-margin_top = 3.0
-margin_bottom = 3.0
-modulate_color = Color( 1, 0.666667, 0.262745, 1 )
-
 [resource]
 default_font = ExtResource( 1 )
-Button/fonts/font = ExtResource( 1 )
 Button/styles/disabled = SubResource( 1 )
 Button/styles/focus = SubResource( 2 )
 Button/styles/hover = SubResource( 3 )
@@ -109,8 +99,5 @@ Panel/styles/panel = SubResource( 16 )
 PopupPanel/styles/panel = SubResource( 17 )
 ProgressBar/colors/font_color = Color( 0.94, 0.94, 0.94, 1 )
 ProgressBar/colors/font_color_shadow = Color( 0, 0, 0, 1 )
-ProgressBar/fonts/font = ExtResource( 1 )
 ProgressBar/styles/bg = null
 ProgressBar/styles/fg = null
-TooltipLabel/colors/font_color = Color( 1, 1, 1, 1 )
-TooltipPanel/styles/panel = SubResource( 18 )

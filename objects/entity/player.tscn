@@ -12,6 +12,7 @@ font_data = ExtResource( 2 )
 
 [node name="player" type="KinematicBody2D"]
 script = ExtResource( 1 )
+tooltip_text = "[color=#0ff]You[/color]"
 
 [node name="Sprite" type="Sprite" parent="."]
 scale = Vector2( 0.03, 0.03 )

@@ -7,5 +7,6 @@
   "itype":"NPC",
   "data":{
     "id":"test_npc"
-  }
+  },
+  "tooltip_text":"Press [color=#fb0]F[/color] to talk"
 }

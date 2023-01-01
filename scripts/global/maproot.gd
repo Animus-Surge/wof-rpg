@@ -75,6 +75,7 @@ puppetsync func spawn_object(data):
 	obj.collideable = data.collideable
 	obj.texture = load(data.texture_path) if !data.texture_path.empty() else null
 	obj.position = Vector2(data.position.x, data.position.y)
+	obj.tooltip_text = data.tooltip_text
 	$YSort.add_child(obj)
 
 func save(_save_name):
